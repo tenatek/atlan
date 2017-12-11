@@ -1,0 +1,23 @@
+{
+  "name": "atlan",
+  "version": "0.1.0",
+  "description": "Quickly create a CRUD API with Express and MongoDB.",
+  "keywords": ["CRUD", "API", "Node.js", "Express", "MongoDB"],
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Ludovic Cyril Michel",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.4",
+    "mongodb": "^2.2.31"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "jest": "^21.1.0"
+  }
+}
