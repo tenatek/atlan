@@ -1,11 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
 
 const Atlan = require('../Atlan.js');
 
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://test:test@ds147534.mlab.com:47534/api-test';
 
@@ -40,8 +39,8 @@ MongoClient.connect(url, (err, db) => {
   }, {
     getOne: {
       authorization(req) {
-        if (req.get('Authorization') == 'true') return 'AUTHORIZED';
-        if (req.get('Authorization') == 'soso') return 'RESTRICTED';
+        if (req.get('Authorization') === 'true') return 'AUTHORIZED';
+        if (req.get('Authorization') === 'soso') return 'RESTRICTED';
         return null;
       },
       filter(data, authorization) {
@@ -51,12 +50,13 @@ MongoClient.connect(url, (err, db) => {
             name: data.name
           };
         }
+        return null;
       }
     },
     post: {
       authorization(req) {
-        if (req.get('Authorization') == 'true') return 'AUTHORIZED';
-        if (req.get('Authorization') == 'soso') return 'RESTRICTED';
+        if (req.get('Authorization') === 'true') return 'AUTHORIZED';
+        if (req.get('Authorization') === 'soso') return 'RESTRICTED';
         return null;
       },
       validation(data, authorization) {
