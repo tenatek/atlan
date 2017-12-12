@@ -31,8 +31,10 @@ class Atlan {
     else throw new Error('Invalid schema.');
 
     // add hooks to hook store
-    if (hooks && HookValidator.validateHooks(hooks)) this.hooks[model] = hooks;
-    else throw new Error('Invalid hooks.');
+    if (hooks) {
+      if (HookValidator.validateHooks(hooks)) this.hooks[model] = hooks;
+      else throw new Error('Invalid hooks.');
+    }
 
     // define mandatory middleware
     let middleware = {
