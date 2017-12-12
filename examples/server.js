@@ -1,17 +1,19 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const Atlan = require('./package/atlan.js')
+const app = express();
 
-const MongoClient = require('mongodb').MongoClient
-const url = 'mongodb://test:test@ds147534.mlab.com:47534/api-test'
+const Atlan = require('../Atlan.js');
+
+const MongoClient = require('mongodb').MongoClient;
+
+const url = 'mongodb://test:test@ds147534.mlab.com:47534/api-test';
 
 let api = new Atlan();
 
 app.use('/api', api.router());
 
-MongoClient.connect(url, function(err, db) {
+MongoClient.connect(url, (err, db) => {
   api.driver(err, db);
   api.model('user', {
     name: {
@@ -37,28 +39,30 @@ MongoClient.connect(url, function(err, db) {
     }
   }, {
     getOne: {
-      authorization: function(req) {
-        if(req.get('Authorization') == 'true') return 'AUTHORIZED';
-        if(req.get('Authorization') == 'soso') return 'RESTRICTED';
-        else return null;
+      authorization(req) {
+        if (req.get('Authorization') == 'true') return 'AUTHORIZED';
+        if (req.get('Authorization') == 'soso') return 'RESTRICTED';
+        return null;
       },
-      filter: function(data, authorization) {
-        if(authorization === 'AUTHORIZED') return data;
-        if(authorization === 'RESTRICTED') return {
-          name: data.name
+      filter(data, authorization) {
+        if (authorization === 'AUTHORIZED') return data;
+        if (authorization === 'RESTRICTED') {
+          return {
+            name: data.name
+          };
         }
       }
     },
     post: {
-      authorization: function(req) {
-        if(req.get('Authorization') == 'true') return 'AUTHORIZED';
-        if(req.get('Authorization') == 'soso') return 'RESTRICTED';
-        else return null;
+      authorization(req) {
+        if (req.get('Authorization') == 'true') return 'AUTHORIZED';
+        if (req.get('Authorization') == 'soso') return 'RESTRICTED';
+        return null;
       },
-      validation: function(data, authorization) {
-        if(authorization === 'RESTRICTED') return false;
-        else return true;
-      },
+      validation(data, authorization) {
+        if (authorization === 'RESTRICTED') return false;
+        return true;
+      }
     }
   });
 });

@@ -19,5 +19,9 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "jest": "^21.1.0"
+  },
+  "peerDependencies": {
+    "express": "^4.15.4",
+    "mongodb": "^2.2.31"
   }
 }
