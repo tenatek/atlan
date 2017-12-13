@@ -5,21 +5,15 @@ module.exports = {
       type: 'string',
       required: true
     },
-    telephone: {
-      type: 'number'
-    },
     email: {
       type: 'string',
       required: true
     },
-    permissions: {
-      type: 'object',
-      required: true,
-      children: {
-        test: {
-          type: 'number',
-          required: true
-        }
+    posts: {
+      type: 'array',
+      elements: {
+        type: 'ref',
+        model: 'post'
       }
     }
   },
