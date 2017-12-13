@@ -1,6 +1,6 @@
 {
   "name": "atlan",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Quickly create a CRUD API with Express and MongoDB.",
   "keywords": [
     "CRUD",
