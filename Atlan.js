@@ -20,14 +20,8 @@ class Atlan {
     return this.r.router;
   }
 
-  model(model, ...args) {
-    let schema;
-    let hooks;
-    if (args.length === 2) {
-      [schema, hooks] = args;
-    } else {
-      ({ schema, hooks } = require(args[0]));
-    }
+  model(model, definition) {
+    let { schema, hooks } = definition;
     // add schema to schema store
     if (
       !this.schemas[model] &&
