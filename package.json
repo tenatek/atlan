@@ -2,7 +2,13 @@
   "name": "atlan",
   "version": "0.1.2",
   "description": "Quickly create a CRUD API with Express and MongoDB.",
-  "keywords": ["CRUD", "API", "Node.js", "Express", "MongoDB"],
+  "keywords": [
+    "CRUD",
+    "API",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "jest"
@@ -11,14 +17,14 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "^4.15.4",
-    "mongodb": "^2.2.31"
+    "express": "^4.16.2",
+    "mongodb": "^2.2.33"
   },
   "devDependencies": {
-    "eslint": "^4.13.0",
+    "eslint": "^4.13.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
-    "jest": "^21.1.0"
+    "jest": "^21.2.1"
   },
   "peerDependencies": {
     "express": "^4.15.4",

@@ -8,6 +8,8 @@
     "no-await-in-loop": "off",
     "no-multiple-empty-lines": ["error", { "max": 1 }],
     "valid-typeof": "off",
-    "func-names": "off"
+    "func-names": "off",
+    "import/no-dynamic-require": "off",
+    "global-require": "off"
   }
 }

@@ -13,16 +13,21 @@ class Atlan {
 
   driver(err, db) {
     if (err) throw new Error('Error establishing a database connection.');
-    else {
-      this.d = new Driver(db);
-    }
+    else this.d = new Driver(db);
   }
 
   router() {
     return this.r.router;
   }
 
-  model(model, schema, hooks) {
+  model(model, ...args) {
+    let schema;
+    let hooks;
+    if (args.length === 2) {
+      [schema, hooks] = args;
+    } else {
+      ({ schema, hooks } = require(args[0]));
+    }
     // add schema to schema store
     if (
       !this.schemas[model] &&

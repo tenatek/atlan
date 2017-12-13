@@ -14,7 +14,8 @@ app.use('/api', api.router());
 
 MongoClient.connect(url, (err, db) => {
   api.driver(err, db);
-  api.model('user', {
+
+  /* api.model('user', {
     name: {
       type: 'string',
       required: true
@@ -64,7 +65,8 @@ MongoClient.connect(url, (err, db) => {
         return true;
       }
     }
-  });
+  }); */
+  api.model('user', `${__dirname}/User`);
 });
 
 app.listen(process.env.PORT || 9000);
