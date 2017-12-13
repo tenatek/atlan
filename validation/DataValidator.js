@@ -27,7 +27,7 @@ exports = {
         }
       }
       for (let key in dataNode) {
-        if (!(await exports.checkNode(schemas, `${schemaPath}/${key}`, dataNode[key], checkRequired))) return false;
+        if (!(await exports.checkNode(schemas, `${schemaPath}/${key}`, dataNode[key], checkRequired, driver))) return false;
       }
 
     // handles arrays
@@ -35,7 +35,7 @@ exports = {
     } else if (schemaNode.type === 'array') {
       if (dataNode == null || dataNode.constructor !== Array) return false;
       for (let element of dataNode) {
-        if (!(await exports.checkNode(schemas, `${schemaPath}/elements`, element, true))) return false;
+        if (!(await exports.checkNode(schemas, `${schemaPath}/elements`, element, true, driver))) return false;
       }
 
     // handles objects
@@ -48,7 +48,7 @@ exports = {
         }
       }
       for (let key in dataNode) {
-        if (!(await exports.checkNode(schemas, `${schemaPath}/children/${key}`, dataNode[key], checkRequired))) return false;
+        if (!(await exports.checkNode(schemas, `${schemaPath}/children/${key}`, dataNode[key], checkRequired, driver))) return false;
       }
 
     // handles references
@@ -65,7 +65,7 @@ exports = {
 
   async checkRef(schemas, model, dataNode, driver) {
     if (typeof dataNode === 'string') {
-      if ((await driver.getOne(dataNode)) === null) return false;
+      if ((await driver.getOne(model, dataNode)) === null) return false;
     } else if (dataNode != null && dataNode.constructor === Object) {
       if (!(await exports.validateCreateRequest(schemas, model, dataNode))) return false;
     } else return false;
