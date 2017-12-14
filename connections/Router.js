@@ -6,6 +6,8 @@ const FilterEngine = require('../hooks/FilterEngine');
 const AuthorizationEngine = require('../hooks/AuthorizationEngine');
 const QueryEngine = require('../hooks/QueryEngine');
 
+// TODO: this should be the package's entrypoint
+
 class Router {
   constructor() {
     this.router = express.Router();

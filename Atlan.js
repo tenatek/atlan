@@ -51,6 +51,7 @@ class Atlan {
       }
 
       // define mandatory middleware
+      // TODO: this goes, as the hooks will be directly in the router
       let middleware = {
         getOne: Object.assign({
           query: this.d.getOne.bind(this.d)
