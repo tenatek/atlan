@@ -6,6 +6,12 @@ module.exports = {
       try {
         let params;
         if (req.query) params = req.query;
+        if (req.query._search) {
+          delete params._search;
+          params.$text = {
+            $search: params._search
+          };
+        }
         if (req.params.id) params = req.params.id;
         let args = [params];
         if (data) args.unshift(req.body);
