@@ -1,131 +1,113 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+function routeGetOne(router, model, hooks) {
+  let middleware = [];
 
-const ValidationEngine = require('../hooks/ValidationEngine');
-const FilterEngine = require('../hooks/FilterEngine');
-const AuthorizationEngine = require('../hooks/AuthorizationEngine');
-const QueryEngine = require('../hooks/QueryEngine');
-
-// TODO: this should be the package's entrypoint
-
-class Router {
-  constructor() {
-    this.router = express.Router();
-    this.router.use(bodyParser.json());
+  // developer-defined authorization middleware, if it exists
+  if (hooks.authorization) {
+    middleware.push(Wrapper.authorize(hooks.authorization));
   }
 
-  addRoutes(model, middleware, schemas) {
-    this.addGetOne(model, middleware.getOne);
-    this.addGetMany(model, middleware.getMany);
-    this.addPost(model, middleware.post, schemas);
-    this.addPatch(model, middleware.patch, schemas);
-    this.addDelete(model, middleware.delete);
+  // package-defined query middleware
+  middleware.push(Wrapper.query(hooks.query, model, false));
+
+  // developer-defined filter middleware, if it exists
+  if (hooks.filter) {
+    middleware.push(Wrapper.filter(hooks.filter));
   }
 
-  addGetOne(model, middleware) {
-    let wrappers = [];
-
-    // developer-defined authorization middleware, if it exists
-    if (middleware.authorization) {
-      wrappers.push(AuthorizationEngine.authorizationWrapper(middleware.authorization));
-    }
-
-    // package-defined query middleware
-    wrappers.push(QueryEngine.queryWrapper(middleware.query, model, false));
-
-    // developer-defined filter middleware, if it exists
-    if (middleware.filter) wrappers.push(FilterEngine.filterWrapper(middleware.filter));
-
-    this.router.get(`/${model}/:id`, ...wrappers, (req, res) => {
-      res.status(200).send(res.locals.data);
-    });
-  }
-
-  addGetMany(model, middleware) {
-    let wrappers = [];
-
-    // developer-defined authorization middleware, if it exists
-    if (middleware.authorization) {
-      wrappers.push(AuthorizationEngine.authorizationWrapper(middleware.authorization));
-    }
-
-    // package-defined query middleware
-    wrappers.push(QueryEngine.queryWrapper(middleware.query, model, false));
-
-    // developer-defined filter middleware, if it exists
-    if (middleware.filter) wrappers.push(FilterEngine.filterWrapper(middleware.filter));
-
-    this.router.get(`/${model}`, ...wrappers, (req, res) => {
-      res.status(200).send(res.locals.data);
-    });
-  }
-
-  addPost(model, middleware, schemas) {
-    let wrappers = [];
-
-    // developer-defined authorization middleware, if it exists
-    if (middleware.authorization) {
-      wrappers.push(AuthorizationEngine.authorizationWrapper(middleware.authorization));
-    }
-
-    // package-defined schema validation middleware
-    wrappers
-      .push(ValidationEngine.dataValidationWrapper(middleware.dataValidation, model, schemas));
-
-    // developer-defined custom validation middleware, if it exists
-    if (middleware.validation) {
-      wrappers.push(ValidationEngine.validationWrapper(middleware.validation));
-    }
-
-    // package-defined query middleware
-    wrappers.push(QueryEngine.queryWrapper(middleware.query, model, true));
-
-    this.router.post(`/${model}`, ...wrappers, (req, res) => {
-      res.sendStatus(201);
-    });
-  }
-
-  addPatch(model, middleware, schemas) {
-    let wrappers = [];
-
-    // developer-defined authorization middleware, if it exists
-    if (middleware.authorization) {
-      wrappers.push(AuthorizationEngine.authorizationWrapper(middleware.authorization));
-    }
-
-    // package-defined schema validation middleware
-    wrappers
-      .push(ValidationEngine.dataValidationWrapper(middleware.dataValidation, model, schemas));
-
-    // developer-defined custom validation middleware, if it exists
-    if (middleware.validation) {
-      wrappers.push(ValidationEngine.validationWrapper(middleware.validation));
-    }
-
-    // package-defined query middleware
-    wrappers.push(QueryEngine.queryWrapper(middleware.query, model, true));
-
-    this.router.patch(`/${model}/:id`, ...wrappers, (req, res) => {
-      res.sendStatus(200);
-    });
-  }
-
-  addDelete(model, middleware) {
-    let wrappers = [];
-
-    // developer-defined authorization middleware, if it exists
-    if (middleware.authorization) {
-      wrappers.push(AuthorizationEngine.authorizationWrapper(middleware.authorization));
-    }
-
-    // package-defined query middleware
-    wrappers.push(QueryEngine.queryWrapper(middleware.query, model, false));
-
-    this.router.delete(`/${model}/:id`, ...wrappers, (req, res) => {
-      res.sendStatus(200);
-    });
-  }
-
+  router.get(`/${model}/:id`, ...middleware, (req, res) => {
+    res.status(200).send(res.locals.data);
+  });
 }
 
-module.exports = Router;
+function routeGetMany(router, model, hooks) {
+  let middleware = [];
+
+  // developer-defined authorization middleware, if it exists
+  if (hooks.authorization) {
+    middleware.push(Wrapper.authorize(hooks.authorization));
+  }
+
+  // package-defined query middleware
+  middleware.push(Wrapper.query(hooks.query, model, false));
+
+  // developer-defined filter middleware, if it exists
+  if (hooks.filter) middleware.push(Wrapper.filter(hooks.filter));
+
+  router.get(`/${model}`, ...middleware, (req, res) => {
+    res.status(200).send(res.locals.data);
+  });
+}
+
+function routePost(router, model, hooks, schemas) {
+  let middleware = [];
+
+  // developer-defined authorization middleware, if it exists
+  if (hooks.authorization) {
+    middleware.push(Wrapper.authorize(hooks.authorization));
+  }
+
+  // package-defined schema validation middleware
+  middleware.push(Wrapper.validate(hooks.dataValidation, model, schemas));
+
+  // developer-defined custom validation middleware, if it exists
+  if (hooks.validation) {
+    middleware.push(Wrapper.check(hooks.validation));
+  }
+
+  // package-defined query middleware
+  middleware.push(Wrapper.query(hooks.query, model, true));
+
+  router.post(`/${model}`, ...middleware, (req, res) => {
+    res.sendStatus(201);
+  });
+}
+
+function routePatch(router, model, hooks, schemas) {
+  let middleware = [];
+
+  // developer-defined authorization middleware, if it exists
+  if (hooks.authorization) {
+    middleware.push(Wrapper.authorize(hooks.authorization));
+  }
+
+  // package-defined schema validation middleware
+  middleware.push(Wrapper.validate(hooks.dataValidation, model, schemas));
+
+  // developer-defined custom validation middleware, if it exists
+  if (hooks.validation) {
+    middleware.push(Wrapper.check(hooks.validation));
+  }
+
+  // package-defined query middleware
+  middleware.push(Wrapper.query(hooks.query, model, true));
+
+  router.patch(`/${model}/:id`, ...middleware, (req, res) => {
+    res.sendStatus(200);
+  });
+}
+
+function routeDelete(router, model, hooks) {
+  let middleware = [];
+
+  // developer-defined authorization middleware, if it exists
+  if (hooks.authorization) {
+    middleware.push(Wrapper.authorize(hooks.authorization));
+  }
+
+  // package-defined query middleware
+  middleware.push(Wrapper.query(hooks.query, model, false));
+
+  router.delete(`/${model}/:id`, ...middleware, (req, res) => {
+    res.sendStatus(200);
+  });
+}
+
+function route(router, model, hooks, schemas) {
+  routeGetOne(router, model, hooks);
+  routeGetMany(model, model, hooks);
+  routePost(model, model, hooks, schemas);
+  routePatch(model, model, hooks, schemas);
+  routeDelete(model, model, hooks);
+}
+
+module.exports = { route };
