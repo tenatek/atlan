@@ -1,9 +1,6 @@
 const Driver = require('./Driver');
-const Util = require('./Util');
 
-async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
-  let schemaNode = Util.getNodeFromPath(schemas, schemaPath);
-
+async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
   // filters out unknown attributes
 
   if (schemaNode === undefined) return false;
@@ -18,7 +15,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
       }
     }
     for (let key in dataNode) {
-      if (!await checkNode(schemas, `${schemaPath}/${key}`, dataNode[key], checkRequired, db)) {
+      if (!await checkNode(schemas, schemaNode[key], dataNode[key], checkRequired, db)) {
         return false;
       }
     }
@@ -27,7 +24,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
   } else if (schemaNode.type === 'array') {
     if (dataNode == null || dataNode.constructor !== Array) return false;
     for (let element of dataNode) {
-      if (!await checkNode(schemas, `${schemaPath}/elements`, element, true, db)) {
+      if (!await checkNode(schemas, schemaNode.elements, element, true, db)) {
         return false;
       }
     }
@@ -41,9 +38,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
       }
     }
     for (let key in dataNode) {
-      if (
-        !await checkNode(schemas, `${schemaPath}/children/${key}`, dataNode[key], checkRequired, db)
-      ) {
+      if (!await checkNode(schemas, schemaNode.children[key], dataNode[key], checkRequired, db)) {
         return false;
       }
     }
@@ -58,22 +53,30 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
   return true;
 }
 
+// TODO: change the getOne API to remove the object construction?
+
 async function checkRef(schemas, model, dataNode, db) {
   if (typeof dataNode === 'string') {
-    if ((await Driver.getOne(db, model, dataNode)) === null) return false;
+    if ((await Driver.getOne(db, model, { id: dataNode })) === null) {
+      return false;
+    }
   } else if (dataNode != null && dataNode.constructor === Object) {
-    if (!await validateCreateRequest(schemas, model, dataNode)) return false;
-  } else return false;
+    if (!await validateCreateRequest(db, schemas, model, dataNode)) {
+      return false;
+    }
+  } else {
+    return false;
+  }
 
   return true;
 }
 
 async function validateCreateRequest(db, schemas, model, data) {
-  return checkNode(schemas, model, data, true, db);
+  return checkNode(schemas, schemas[model], data, true, db);
 }
 
 async function validateUpdateRequest(db, schemas, model, data) {
-  return checkNode(schemas, model, data, false, db);
+  return checkNode(schemas, schemas[model], data, false, db);
 }
 
 module.exports = { validateCreateRequest, validateUpdateRequest };

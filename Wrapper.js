@@ -10,8 +10,7 @@ function authorize(middleware) {
         next();
       } else throw new Error('Invalid authorization middleware.');
     } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.message);
     }
   };
 }
@@ -22,13 +21,12 @@ function filter(middleware) {
       res.locals.data = await middleware(res.locals.data, res.locals.authorization);
       next();
     } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.message);
     }
   };
 }
 
-function query(middleware, model, db) {
+function query(middleware, model, db, indexes) {
   return async function (req, res, next) {
     let queryData = {
       id: req.params.id,
@@ -36,11 +34,10 @@ function query(middleware, model, db) {
       data: req.body
     };
     try {
-      res.locals.data = await middleware(db, model, queryData);
+      res.locals.data = await middleware(db, model, queryData, indexes);
       next();
     } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.message);
     }
   };
 }
@@ -54,8 +51,7 @@ function validate(middleware, model, schemas, db) {
         res.sendStatus(400);
       }
     } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.message);
     }
   };
 }
@@ -72,8 +68,7 @@ function check(middleware) {
         throw new Error('Invalid validation middleware.');
       }
     } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.message);
     }
   };
 }

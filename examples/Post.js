@@ -13,8 +13,7 @@ module.exports = {
     },
     publisher: {
       type: 'ref',
-      model: 'user',
-      required: true
+      model: 'user'
     }
   }
 };

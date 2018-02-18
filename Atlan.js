@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 
 const SchemaValidator = require('./SchemaValidator');
 const HookValidator = require('./HookValidator');
+const RelationIndexer = require('./RelationIndexer');
 const Router = require('./Router');
 
 class Atlan {
@@ -11,6 +12,7 @@ class Atlan {
     this.d = null;
     this.schemas = {};
     this.hooks = {};
+    this.indexes = {};
 
     // add JSON-parsing middleware to all routes
 
@@ -18,15 +20,18 @@ class Atlan {
   }
 
   driver(err, db) {
-    if (err) throw new Error('Error establishing a database connection.');
-    else this.d = db;
+    if (err) {
+      throw new Error('Error establishing a database connection.');
+    } else {
+      this.d = db;
+    }
   }
 
   router() {
     return this.r;
   }
 
-  model(...args) {
+  async model(...args) {
     // parse params
 
     let modelArray;
@@ -53,20 +58,25 @@ class Atlan {
         SchemaValidator.validateSchema(this.schemas, schema, pendingModels)
       ) {
         this.schemas[name] = schema;
-      } else throw new Error('Invalid schema.');
+        this.indexes[name] = RelationIndexer.index(schema);
+      } else {
+        throw new Error('Invalid schema.');
+      }
 
       // add hooks to hook store
 
       if (hooks) {
         if (HookValidator.validateHooks(hooks)) this.hooks[name] = hooks;
-        else throw new Error('Invalid hooks.');
+        else {
+          throw new Error('Invalid hooks.');
+        }
       } else {
         hooks = {};
       }
 
       // add routes to router
 
-      Router.route(this.r, this.d, name, hooks, this.schemas);
+      Router.route(this.r, this.d, name, hooks, this.schemas, this.indexes);
     }
   }
 }

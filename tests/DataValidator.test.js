@@ -1,7 +1,7 @@
-const validate = require('../package/dataValidation')
+const DataValidator = require('../DataValidator');
 
 const schema = {
-  'Test': {
+  person: {
     name: {
       type: 'string',
       required: true
@@ -31,70 +31,72 @@ const schema = {
             },
             required: true
           },
-          age: {
+          race: {
             type: 'ref',
-            model: 'TestRef',
+            model: 'race',
             required: true
           }
         }
       }
     }
   },
-  'TestRef': {
+  race: {
     name: {
       type: 'string',
       required: true
     },
-    attr: {
+    classification: {
       type: 'number',
       required: true
     }
   }
-}
+};
 
 test('rejects unknown attributes', () => {
-  return expect(validate.validateCreateRequest(schema, 'Test', {
+  expect(DataValidator.validateCreateRequest(null, schema, 'person', {
     name: 'Tim',
     telephone: 123456,
     email: 'blue',
     test: true
-  })).resolves.toBe(false)
-})
+  })).resolves.toBe(false);
+});
 
 test('ignores optional attributes', () => {
-  return expect(validate.validateCreateRequest(schema, 'Test', {
+  expect(DataValidator.validateCreateRequest(null, schema, 'person', {
     name: 'Tim',
     email: 'blue'
-  })).resolves.toBe(true)
-})
+  })).resolves.toBe(true);
+});
 
 test('enforces required attributes', () => {
-  return expect(validate.validateCreateRequest(schema, 'Test', {
+  expect(DataValidator.validateCreateRequest(null, schema, 'person', {
     name: 'true',
     telephone: 534
-  })).resolves.toBe(false)
-})
+  })).resolves.toBe(false);
+});
 
 test('checks attribute types', () => {
-  return expect(validate.validateCreateRequest(schema, 'Test', {
+  expect(DataValidator.validateCreateRequest(null, schema, 'person', {
     name: 'true',
     telephone: '534',
     email: 'test'
-  })).resolves.toBe(false)
-})
+  })).resolves.toBe(false);
+});
 
 test('checks array element types', () => {
-  return expect(validate.validateCreateRequest(schema, 'Test', {
+  expect(DataValidator.validateCreateRequest(null, schema, 'person', {
     name: 'true',
     telephone: 534,
     email: 'test',
-    pets: [{
-      age: {
-        name: 'Bob'
-      },
-      name: {
-        first: 'tom'
+    pets: [
+      {
+        age: {
+          name: 'Bob'
+        },
+        name: {
+          first: 'tom'
+        }
       }
-    }]
-  })).resolves.toBe(false)
-})
+    ]
+  })).resolves.toBe(false);
+});

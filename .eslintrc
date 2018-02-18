@@ -7,12 +7,17 @@
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off",
     "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "guard-for-in": "off",
     "prefer-const": "off",
     "padded-blocks": "off",
     "comma-dangle": ["error", "never"],
     "valid-typeof": "off",
     "func-names": "off",
     "import/no-dynamic-require": "off",
-    "global-require": "off"
+    "global-require": "off",
+    "arrow-body-style": ["error", "always"]
+  },
+  "env": {
+    "jest": true
   }
 }
