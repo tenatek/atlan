@@ -18,7 +18,7 @@ Inspired by [json-server](https://github.com/typicode/json-server).
 
 ## How to use
 
-1. Declare your models and hooks in a JSON object
+1. Declare your models and hooks with JSON
 
 ```javascript
 const user = {
@@ -73,7 +73,7 @@ const post = {
 };
 ```
 
-2. Plug into Express
+2. Instantiate Atlan and plug into Express
 
 ```javascript
 const app = Express();
