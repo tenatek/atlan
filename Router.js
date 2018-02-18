@@ -8,7 +8,7 @@ const Wrapper = require('./Wrapper');
  * Returns data
  */
 
-function routeGetOne(router, db, model, hooks) {
+function routeGetOne(router, db, model, hooks, indexes) {
   let middleware = [];
 
   // developer-defined authorization middleware, if it exists
@@ -17,7 +17,7 @@ function routeGetOne(router, db, model, hooks) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.getOne, model, db));
+  middleware.push(Wrapper.query(Driver.getOne, model, db, indexes));
 
   // developer-defined filter middleware, if it exists
   if (hooks && hooks.filter) {
@@ -35,7 +35,7 @@ function routeGetOne(router, db, model, hooks) {
  * Returns data
  */
 
-function routeGetMany(router, db, model, hooks) {
+function routeGetMany(router, db, model, hooks, indexes) {
   let middleware = [];
 
   // developer-defined authorization middleware, if it exists
@@ -44,7 +44,7 @@ function routeGetMany(router, db, model, hooks) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.getMany, model, db));
+  middleware.push(Wrapper.query(Driver.getMany, model, db, indexes));
 
   // developer-defined filter middleware, if it exists
   if (hooks && hooks.filter) middleware.push(Wrapper.filter(hooks.filter));
@@ -60,7 +60,7 @@ function routeGetMany(router, db, model, hooks) {
  * Returns ID
  */
 
-function routePost(router, db, model, hooks, schemas) {
+function routePost(router, db, model, hooks, schemas, indexes) {
   let middleware = [];
 
   // developer-defined authorization middleware, if it exists
@@ -77,7 +77,7 @@ function routePost(router, db, model, hooks, schemas) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.create, model, db));
+  middleware.push(Wrapper.query(Driver.create, model, db, indexes));
 
   router.post(`/${model}`, ...middleware, (req, res) => {
     res.status(201).send(res.locals.data);
@@ -90,7 +90,7 @@ function routePost(router, db, model, hooks, schemas) {
  * No return value
  */
 
-function routePatch(router, db, model, hooks, schemas) {
+function routePatch(router, db, model, hooks, schemas, indexes) {
   let middleware = [];
 
   // developer-defined authorization middleware, if it exists
@@ -107,7 +107,7 @@ function routePatch(router, db, model, hooks, schemas) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.update, model, db));
+  middleware.push(Wrapper.query(Driver.update, model, db, indexes));
 
   router.patch(`/${model}/:id`, ...middleware, (req, res) => {
     res.sendStatus(200);
@@ -136,11 +136,11 @@ function routeDelete(router, db, model, hooks) {
   });
 }
 
-function route(router, db, model, hooks, schemas) {
-  routeGetOne(router, db, model, hooks.getOne);
-  routeGetMany(router, db, model, hooks.getMany);
-  routePost(router, db, model, hooks.post, schemas);
-  routePatch(router, db, model, hooks.patch, schemas);
+function route(router, db, model, hooks, schemas, indexes) {
+  routeGetOne(router, db, model, hooks.getOne, indexes);
+  routeGetMany(router, db, model, hooks.getMany, indexes);
+  routePost(router, db, model, hooks.post, schemas, indexes);
+  routePatch(router, db, model, hooks.patch, schemas, indexes);
   routeDelete(router, db, model, hooks.delete);
 }
 

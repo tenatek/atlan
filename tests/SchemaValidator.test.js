@@ -1,7 +1,7 @@
-const validate = require('../package/schemaValidation')
+const SchemaValidator = require('../SchemaValidator');
 
 const schema = {
-  'Test': {
+  person: {
     name: {
       type: 'string',
       required: true
@@ -39,19 +39,19 @@ const schema = {
       }
     }
   }
-}
+};
 
 test('rejects schema nodes that are not objects', () => {
-  expect(validate.validateSchema(schema, {
+  expect(SchemaValidator.validateSchema(schema, {
     name: 'Tim',
     telephone: 123456,
     email: 'blue',
     test: true
-  })).toBe(false)
-})
+  })).toBe(false);
+});
 
 test('"required" is optional', () => {
-  expect(validate.validateSchema(schema, {
+  expect(SchemaValidator.validateSchema(schema, {
     name: {
       type: 'string'
     },
@@ -61,14 +61,14 @@ test('"required" is optional', () => {
     email: {
       type: 'string'
     }
-  })).toBe(true)
-})
+  })).toBe(true);
+});
 
 test('references work', () => {
-  expect(validate.validateSchema(schema, {
+  expect(SchemaValidator.validateSchema(schema, {
     name: {
       type: 'ref',
-      model: 'Test'
+      model: 'person'
     },
     telephone: {
       type: 'number',
@@ -77,11 +77,11 @@ test('references work', () => {
     email: {
       type: 'string'
     }
-  })).toBe(true)
-})
+  })).toBe(true);
+});
 
 test('complex example', () => {
-  expect(validate.validateSchema(schema, {
+  expect(SchemaValidator.validateSchema(schema, {
     name: {
       type: 'string',
       required: true
@@ -91,6 +91,11 @@ test('complex example', () => {
     },
     email: {
       type: 'string',
+      required: true
+    },
+    friend: {
+      type: 'ref',
+      model: 'person',
       required: true
     },
     pets: {
@@ -118,11 +123,11 @@ test('complex example', () => {
         }
       }
     }
-  })).toBe(true)
-})
+  })).toBe(true);
+});
 
 test('rejects unknown attributes', () => {
-  expect(validate.validateSchema(schema, {
+  expect(SchemaValidator.validateSchema(schema, {
     name: {
       type: 'string',
       required: true,
@@ -160,5 +165,5 @@ test('rejects unknown attributes', () => {
         }
       }
     }
-  })).toBe(false)
-})
+  })).toBe(false);
+});
