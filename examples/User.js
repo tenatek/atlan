@@ -8,6 +8,10 @@ module.exports = {
       type: 'string',
       required: true
     },
+    mentor: {
+      type: 'ref',
+      model: 'user'
+    },
     posts: {
       type: 'array',
       elements: {

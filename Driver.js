@@ -5,14 +5,29 @@ const QueryFormatter = require('./QueryFormatter');
 
 // TODO: send a 400 error instead of a 500 when a badly formatted ID is received
 
-async function getOne(db, model, queryData, indexes) {
+async function getOne(db, model, queryData, indexes, prevQueries) {
   let result = await db.collection(model).findOne({
     _id: ObjectId(queryData.id)
+  });
+  if (!prevQueries) {
+    prevQueries = [];
+  }
+  prevQueries.push({
+    id: queryData.id,
+    model
   });
   if (result && indexes) {
     for (let ref of indexes[model]) {
       await Util.reassignNodes(result, ref.path, (id) => {
-        return getOne(db, ref.model, { id });
+        if (
+          Util.includesObject(prevQueries, {
+            id,
+            model: ref.model
+          })
+        ) {
+          return id;
+        }
+        return getOne(db, ref.model, { id }, indexes, prevQueries);
       });
     }
   }
@@ -29,7 +44,7 @@ async function getMany(db, model, queryData, indexes) {
     for (let result of results) {
       for (let ref of indexes[model]) {
         await Util.reassignNodes(result, ref.path, (id) => {
-          return getOne(db, ref.model, { id });
+          return getOne(db, ref.model, { id }, indexes);
         });
       }
     }

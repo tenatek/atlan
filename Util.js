@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 async function reassignNodes(node, path, cb) {
   if (node !== undefined) {
     if (path.length === 1) {
@@ -18,24 +20,13 @@ async function reassignNodes(node, path, cb) {
   }
 }
 
-function getNodes(node, path) {
-  if (node === undefined) {
-    return null;
-  }
-  if (path.length === 0) {
-    return [node];
-  }
-  if (path[0] === null) {
-    let resultArray = [];
-    for (let i = 0; i < node.length; i += 1) {
-      let result = getNodes(node[i], path.slice(1));
-      if (result !== null) {
-        resultArray = resultArray.concat(result);
-      }
+function includesObject(array, obj) {
+  for (let element of array) {
+    if (_.isEqual(element, obj)) {
+      return true;
     }
-    return resultArray;
   }
-  return getNodes(node[path[0]], path.slice(1));
+  return false;
 }
 
 function checkPossibleKeys(object, possibleKeys) {
@@ -45,4 +36,4 @@ function checkPossibleKeys(object, possibleKeys) {
   return true;
 }
 
-module.exports = { reassignNodes, getNodes, checkPossibleKeys };
+module.exports = { reassignNodes, includesObject, checkPossibleKeys };
