@@ -4,15 +4,15 @@ const QueryFormatter = require('./QueryFormatter');
 
 // TODO: send a 400 error instead of a 500 when a badly formatted ID is received
 
-function getOne(model, queryData) {
-  return this.db.collection(model).findOne({
+function getOne(db, model, queryData) {
+  return db.collection(model).findOne({
     _id: ObjectId(queryData.id)
   });
 }
 
-function getMany(model, queryData) {
+function getMany(db, model, queryData) {
   let query = QueryFormatter.format(queryData.params);
-  return this.db
+  return db
     .collection(model)
     .find(query)
     .toArray();
@@ -20,16 +20,16 @@ function getMany(model, queryData) {
 
 // TODO: save refs as ObjectID, not as strings. Take a look at how globals are passed around
 
-async function create(model, queryData) {
-  let result = await this.db.collection(model).insertOne(queryData.data);
+async function create(db, model, queryData) {
+  let result = await db.collection(model).insertOne(queryData.data);
   return result.insertedId;
 }
 
-function update(model, queryData) {
+function update(db, model, queryData) {
   let formattedData = {
     $set: queryData.data
   };
-  return this.db.collection(model).findOneAndUpdate(
+  return db.collection(model).findOneAndUpdate(
     {
       _id: ObjectId(queryData.id)
     },
@@ -37,8 +37,8 @@ function update(model, queryData) {
   );
 }
 
-function remove(model, queryData) {
-  return this.db.collection(model).deleteOne({
+function remove(db, model, queryData) {
+  return db.collection(model).deleteOne({
     _id: ObjectId(queryData.id)
   });
 }

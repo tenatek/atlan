@@ -7,7 +7,7 @@ function validateHooks(hooks) {
   }
   for (let method in hooks) {
     if (hooks[method] == null || hooks[method].constructor !== Object) return false;
-    if (!Util.checkPossibleKeys(hooks[method], ['authorization', 'validation', 'filter'])) {
+    if (!Util.checkPossibleKeys(hooks[method], ['authorize', 'check', 'filter'])) {
       return false;
     }
     for (let hook in hooks[method]) {

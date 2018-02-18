@@ -1,6 +1,7 @@
+const Driver = require('./Driver');
 const Util = require('./Util');
 
-async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
+async function checkNode(schemas, schemaPath, dataNode, checkRequired, db) {
   let schemaNode = Util.getNodeFromPath(schemas, schemaPath);
 
   // filters out unknown attributes
@@ -17,7 +18,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
       }
     }
     for (let key in dataNode) {
-      if (!await checkNode(schemas, `${schemaPath}/${key}`, dataNode[key], checkRequired, driver)) {
+      if (!await checkNode(schemas, `${schemaPath}/${key}`, dataNode[key], checkRequired, db)) {
         return false;
       }
     }
@@ -26,7 +27,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
   } else if (schemaNode.type === 'array') {
     if (dataNode == null || dataNode.constructor !== Array) return false;
     for (let element of dataNode) {
-      if (!await checkNode(schemas, `${schemaPath}/elements`, element, true, driver)) {
+      if (!await checkNode(schemas, `${schemaPath}/elements`, element, true, db)) {
         return false;
       }
     }
@@ -41,13 +42,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
     }
     for (let key in dataNode) {
       if (
-        !await checkNode(
-          schemas,
-          `${schemaPath}/children/${key}`,
-          dataNode[key],
-          checkRequired,
-          driver
-        )
+        !await checkNode(schemas, `${schemaPath}/children/${key}`, dataNode[key], checkRequired, db)
       ) {
         return false;
       }
@@ -55,7 +50,7 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
 
     // handles references
   } else if (schemaNode.type === 'ref') {
-    if (!await checkRef(schemas, schemaNode.model, dataNode, driver)) return false;
+    if (!await checkRef(schemas, schemaNode.model, dataNode, db)) return false;
 
     // handles string, number, boolean
   } else if (typeof dataNode !== schemaNode.type) return false;
@@ -63,9 +58,9 @@ async function checkNode(schemas, schemaPath, dataNode, checkRequired, driver) {
   return true;
 }
 
-async function checkRef(schemas, model, dataNode, driver) {
+async function checkRef(schemas, model, dataNode, db) {
   if (typeof dataNode === 'string') {
-    if ((await driver.getOne(model, dataNode)) === null) return false;
+    if ((await Driver.getOne(db, model, dataNode)) === null) return false;
   } else if (dataNode != null && dataNode.constructor === Object) {
     if (!await validateCreateRequest(schemas, model, dataNode)) return false;
   } else return false;
@@ -73,12 +68,12 @@ async function checkRef(schemas, model, dataNode, driver) {
   return true;
 }
 
-async function validateCreateRequest(schemas, model, data) {
-  return checkNode(schemas, model, data, true, this.d);
+async function validateCreateRequest(db, schemas, model, data) {
+  return checkNode(schemas, model, data, true, db);
 }
 
-async function validateUpdateRequest(schemas, model, data) {
-  return checkNode(schemas, model, data, false, this.d);
+async function validateUpdateRequest(db, schemas, model, data) {
+  return checkNode(schemas, model, data, false, db);
 }
 
 module.exports = { validateCreateRequest, validateUpdateRequest };

@@ -60,11 +60,13 @@ class Atlan {
       if (hooks) {
         if (HookValidator.validateHooks(hooks)) this.hooks[name] = hooks;
         else throw new Error('Invalid hooks.');
+      } else {
+        hooks = {};
       }
 
       // add routes to router
 
-      Router.addRoutes(this.r, name, hooks, this.schemas);
+      Router.route(this.r, this.d, name, hooks, this.schemas);
     }
   }
 }

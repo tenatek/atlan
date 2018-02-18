@@ -10,6 +10,7 @@ function authorize(middleware) {
         next();
       } else throw new Error('Invalid authorization middleware.');
     } catch (err) {
+      console.log(err);
       res.sendStatus(500);
     }
   };
@@ -21,12 +22,13 @@ function filter(middleware) {
       res.locals.data = await middleware(res.locals.data, res.locals.authorization);
       next();
     } catch (err) {
+      console.log(err);
       res.sendStatus(500);
     }
   };
 }
 
-function query(middleware, model) {
+function query(middleware, model, db) {
   return async function (req, res, next) {
     let queryData = {
       id: req.params.id,
@@ -34,23 +36,25 @@ function query(middleware, model) {
       data: req.body
     };
     try {
-      res.locals.data = await middleware(model, queryData);
+      res.locals.data = await middleware(db, model, queryData);
       next();
     } catch (err) {
+      console.log(err);
       res.sendStatus(500);
     }
   };
 }
 
-function validate(middleware, model, schemas) {
+function validate(middleware, model, schemas, db) {
   return async function (req, res, next) {
     try {
-      if (await middleware(schemas, model, req.body)) {
+      if (await middleware(db, schemas, model, req.body)) {
         next();
       } else {
         res.sendStatus(400);
       }
     } catch (err) {
+      console.log(err);
       res.sendStatus(500);
     }
   };
@@ -68,6 +72,7 @@ function check(middleware) {
         throw new Error('Invalid validation middleware.');
       }
     } catch (err) {
+      console.log(err);
       res.sendStatus(500);
     }
   };
