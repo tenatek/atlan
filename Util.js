@@ -5,16 +5,16 @@ async function reassignNodes(node, path, cb) {
         for (let i = 0; i < node.length; i += 1) {
           node[i] = await cb(node[i]);
         }
-      } else {
+      } else if (node[path[0]]) {
         node[path[0]] = await cb(node[path[0]]);
       }
-    }
-    if (path[0] === null) {
+    } else if (path[0] === null) {
       for (let childNode of node) {
         await reassignNodes(childNode, path.slice(1), cb);
       }
+    } else {
+      await reassignNodes(node[path[0]], path.slice(1), cb);
     }
-    await reassignNodes(node[path[0]], path.slice(1), cb);
   }
 }
 

@@ -42,23 +42,26 @@ async function getMany(db, model, queryData, indexes) {
 
 async function create(db, model, queryData, indexes) {
   for (let ref of indexes[model]) {
-    let nodes = Util.getNodes(queryData.data, ref.path);
-    if (nodes) {
-      for (let node of nodes) {
-        if (node && typeof node !== 'string') {
-          let result = await create(db, ref.model, { data: node }, indexes);
-          await Util.reassignNodes(queryData.data, ref.path, () => {
-            return result;
-          });
-        }
+    await Util.reassignNodes(queryData.data, ref.path, (node) => {
+      if (node && typeof node !== 'string') {
+        return create(db, ref.model, { data: node }, indexes);
       }
-    }
+      return node;
+    });
   }
   let result = await db.collection(model).insertOne(queryData.data);
   return result.insertedId;
 }
 
-function update(db, model, queryData) {
+async function update(db, model, queryData, indexes) {
+  for (let ref of indexes[model]) {
+    await Util.reassignNodes(queryData.data, ref.path, (node) => {
+      if (node && typeof node !== 'string') {
+        return create(db, ref.model, { data: node }, indexes);
+      }
+      return node;
+    });
+  }
   let formattedData = {
     $set: queryData.data
   };

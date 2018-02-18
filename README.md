@@ -1,6 +1,16 @@
 # Atlan
 
-Quickly create a CRUD API with Express and MongoDB.
+Quickly create a CRUD REST API with Express and MongoDB.
+
+Includes:
+
+* Schema definition & validation
+* Hooks for custom validation
+* Hooks for access control
+* Hooks for filtering data
+* Rich queries (data population, search, etc.)
+
+Inspired by [json-server](https://github.com/typicode/json-server).
 
 ## Installation
 
