@@ -1,5 +1,4 @@
 module.exports = {
-
   schema: {
     name: {
       type: 'string',
@@ -20,7 +19,7 @@ module.exports = {
 
   hooks: {
     getOne: {
-      authorization(req) {
+      authorize(req) {
         if (req.get('Authorization') === 'true') return 'AUTHORIZED';
         if (req.get('Authorization') === 'soso') return 'RESTRICTED';
         return null;
@@ -36,16 +35,15 @@ module.exports = {
       }
     },
     post: {
-      authorization(req) {
+      authorize(req) {
         if (req.get('Authorization') === 'true') return 'AUTHORIZED';
         if (req.get('Authorization') === 'soso') return 'RESTRICTED';
         return null;
       },
-      validation(data, authorization) {
+      check(data, authorization) {
         if (authorization === 'RESTRICTED') return false;
         return true;
       }
     }
   }
-
 };

@@ -2,14 +2,8 @@
   "name": "atlan",
   "version": "0.1.8",
   "description": "Quickly create a CRUD API with Express and MongoDB.",
-  "keywords": [
-    "CRUD",
-    "API",
-    "Node.js",
-    "Express",
-    "MongoDB"
-  ],
-  "main": "index.js",
+  "keywords": ["CRUD", "API", "Node.js", "Express", "MongoDB"],
+  "main": "Atlan.js",
   "scripts": {
     "test": "jest"
   },

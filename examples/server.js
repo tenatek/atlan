@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
-const Atlan = require('../index');
+
+const Atlan = require('../Atlan');
 
 const User = require('./User');
 const Post = require('./Post');
@@ -14,12 +15,7 @@ app.use('/api', api.router());
 
 MongoClient.connect(url, (err, db) => {
   api.driver(err, db);
-  // api.model('post', Post);
-  // api.model('user', User);
-  api.model([
-    ['post', Post],
-    ['user', User]
-  ]);
+  api.model([['post', Post], ['user', User]]);
 });
 
 app.listen(process.env.PORT || 9000);

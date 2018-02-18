@@ -1,12 +1,15 @@
 {
   "extends": "airbnb-base",
   "rules": {
+    "no-use-before-define": "off",
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off",
     "no-restricted-syntax": "off",
+    "no-await-in-loop": "off",
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
     "prefer-const": "off",
     "padded-blocks": "off",
     "comma-dangle": ["error", "never"],
-    "no-await-in-loop": "off",
-    "no-multiple-empty-lines": ["error", { "max": 1 }],
     "valid-typeof": "off",
     "func-names": "off",
     "import/no-dynamic-require": "off",
