@@ -1,3 +1,13 @@
+const Driver = require('./Driver');
+const DataValidator = require('./DataValidator');
+const Wrapper = require('./Wrapper');
+
+/*
+ * GET ONE
+ * Authorize, query and filter
+ * Returns data
+ */
+
 function routeGetOne(router, model, hooks) {
   let middleware = [];
 
@@ -7,7 +17,7 @@ function routeGetOne(router, model, hooks) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(hooks.query, model, false));
+  middleware.push(Wrapper.query(Driver.getOne, model));
 
   // developer-defined filter middleware, if it exists
   if (hooks.filter) {
@@ -19,6 +29,12 @@ function routeGetOne(router, model, hooks) {
   });
 }
 
+/*
+ * GET MANY
+ * Authorize, query and filter
+ * Returns data
+ */
+
 function routeGetMany(router, model, hooks) {
   let middleware = [];
 
@@ -28,7 +44,7 @@ function routeGetMany(router, model, hooks) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(hooks.query, model, false));
+  middleware.push(Wrapper.query(Driver.getMany, model));
 
   // developer-defined filter middleware, if it exists
   if (hooks.filter) middleware.push(Wrapper.filter(hooks.filter));
@@ -37,6 +53,12 @@ function routeGetMany(router, model, hooks) {
     res.status(200).send(res.locals.data);
   });
 }
+
+/*
+ * POST
+ * Authorize, validate, check and query
+ * Returns ID
+ */
 
 function routePost(router, model, hooks, schemas) {
   let middleware = [];
@@ -47,20 +69,26 @@ function routePost(router, model, hooks, schemas) {
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(hooks.dataValidation, model, schemas));
+  middleware.push(Wrapper.validate(DataValidator.validateCreateRequest, model, schemas));
 
   // developer-defined custom validation middleware, if it exists
-  if (hooks.validation) {
-    middleware.push(Wrapper.check(hooks.validation));
+  if (hooks.check) {
+    middleware.push(Wrapper.check(hooks.check));
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(hooks.query, model, true));
+  middleware.push(Wrapper.query(Driver.create, model));
 
   router.post(`/${model}`, ...middleware, (req, res) => {
-    res.sendStatus(201);
+    res.status(201).send(res.locals.data);
   });
 }
+
+/*
+ * PATCH
+ * Authorize, validate, check and query
+ * No return value
+ */
 
 function routePatch(router, model, hooks, schemas) {
   let middleware = [];
@@ -71,20 +99,26 @@ function routePatch(router, model, hooks, schemas) {
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(hooks.dataValidation, model, schemas));
+  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, schemas));
 
   // developer-defined custom validation middleware, if it exists
-  if (hooks.validation) {
-    middleware.push(Wrapper.check(hooks.validation));
+  if (hooks.check) {
+    middleware.push(Wrapper.check(hooks.check));
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(hooks.query, model, true));
+  middleware.push(Wrapper.query(Driver.update, model));
 
   router.patch(`/${model}/:id`, ...middleware, (req, res) => {
     res.sendStatus(200);
   });
 }
+
+/*
+ * DELETE
+ * Authorize and query
+ * No return value
+ */
 
 function routeDelete(router, model, hooks) {
   let middleware = [];
@@ -95,7 +129,7 @@ function routeDelete(router, model, hooks) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(hooks.query, model, false));
+  middleware.push(Wrapper.query(Driver.remove, model));
 
   router.delete(`/${model}/:id`, ...middleware, (req, res) => {
     res.sendStatus(200);

@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const SchemaValidator = require('./validation/SchemaValidator');
-const HookValidator = require('./validation/HookValidator');
-const Router = require('./connections/Router');
+const SchemaValidator = require('./SchemaValidator');
+const HookValidator = require('./HookValidator');
+const Router = require('./Router');
 
 class Atlan {
   constructor() {
