@@ -2,6 +2,8 @@
 
 Quickly create a CRUD REST API with Express and MongoDB.
 
+**WARNING:** work in progress. ETA to production: March 2018.
+
 Includes:
 
 * Schema definition & validation
