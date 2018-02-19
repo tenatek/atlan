@@ -35,7 +35,7 @@ function routeGetOne(router, db, model, hooks, indexes) {
  * Returns data
  */
 
-function routeGetMany(router, db, model, hooks, indexes) {
+function routeGetMany(router, db, model, hooks, schemas, indexes) {
   let middleware = [];
 
   // developer-defined authorization middleware, if it exists
@@ -44,7 +44,7 @@ function routeGetMany(router, db, model, hooks, indexes) {
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.getMany, model, db, indexes));
+  middleware.push(Wrapper.query(Driver.getMany, model, db, schemas, indexes));
 
   // developer-defined filter middleware, if it exists
   if (hooks && hooks.filter) middleware.push(Wrapper.filter(hooks.filter));
@@ -138,7 +138,7 @@ function routeDelete(router, db, model, hooks) {
 
 function route(router, db, model, hooks, schemas, indexes) {
   routeGetOne(router, db, model, hooks.getOne, indexes);
-  routeGetMany(router, db, model, hooks.getMany, indexes);
+  routeGetMany(router, db, model, hooks.getMany, schemas, indexes);
   routePost(router, db, model, hooks.post, schemas, indexes);
   routePatch(router, db, model, hooks.patch, schemas, indexes);
   routeDelete(router, db, model, hooks.delete);

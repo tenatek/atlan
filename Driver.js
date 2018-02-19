@@ -1,50 +1,55 @@
 const { ObjectId } = require('mongodb');
 
 const Util = require('./Util');
-const QueryFormatter = require('./QueryFormatter');
+const QueryBuilder = require('./QueryBuilder');
 
 // TODO: send a 400 error instead of a 500 when a badly formatted ID is received
+// TODO: group and rename params
 
-async function getOne(db, model, queryData, indexes, prevQueries) {
+async function getOne(db, model, queryData, indexes, schemas) {
+  let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
+  return _getOne(db, model, queryData.id, indexes, schemas, [], allowedQueries);
+}
+
+async function _getOne(db, model, id, indexes, schemas, prevQueries, allowedQueries) {
   let result = await db.collection(model).findOne({
-    _id: ObjectId(queryData.id)
+    _id: ObjectId(id)
   });
-  if (!prevQueries) {
-    prevQueries = [];
-  }
-  prevQueries.push({
-    id: queryData.id,
-    model
-  });
-  if (result && indexes) {
+  if (result) {
+    prevQueries.push({
+      id,
+      model
+    });
     for (let ref of indexes[model]) {
-      await Util.reassignNodes(result, ref.path, (id) => {
+      await Util.reassignNodes(result, ref.path, (childId) => {
         if (
           Util.includesObject(prevQueries, {
-            id,
+            id: childId,
             model: ref.model
-          })
+          }) ||
+          !allowedQueries.includes(ref.model)
         ) {
-          return id;
+          return childId;
         }
-        return getOne(db, ref.model, { id }, indexes, prevQueries);
+        return _getOne(db, ref.model, childId, indexes, schemas, prevQueries, allowedQueries);
       });
     }
   }
   return result;
 }
 
-async function getMany(db, model, queryData, indexes) {
-  let query = QueryFormatter.format(queryData.params);
+async function getMany(db, model, queryData, indexes, schemas) {
+  let query = QueryBuilder.format(queryData.params, schemas[model]);
   let results = await db
     .collection(model)
     .find(query)
     .toArray();
-  if (indexes) {
+  let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
+  if (allowedQueries.length !== 0) {
     for (let result of results) {
       for (let ref of indexes[model]) {
         await Util.reassignNodes(result, ref.path, (id) => {
-          return getOne(db, ref.model, { id }, indexes);
+          return _getOne(db, ref.model, id, indexes, schemas, [], allowedQueries);
         });
       }
     }
@@ -53,7 +58,6 @@ async function getMany(db, model, queryData, indexes) {
 }
 
 // TODO: save refs as ObjectID, not as strings. Take a look at how globals are passed around
-// TODO: right now it is assigning the same ID to all objects in the array
 
 async function create(db, model, queryData, indexes) {
   for (let ref of indexes[model]) {

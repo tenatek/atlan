@@ -26,7 +26,7 @@ function filter(middleware) {
   };
 }
 
-function query(middleware, model, db, indexes) {
+function query(middleware, model, db, schemas, indexes) {
   return async function (req, res, next) {
     let queryData = {
       id: req.params.id,
@@ -34,7 +34,7 @@ function query(middleware, model, db, indexes) {
       data: req.body
     };
     try {
-      res.locals.data = await middleware(db, model, queryData, indexes);
+      res.locals.data = await middleware(db, model, queryData, indexes, schemas);
       next();
     } catch (err) {
       res.status(500).send(err.message);
