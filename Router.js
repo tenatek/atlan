@@ -4,8 +4,8 @@ const Wrapper = require('./Wrapper');
 
 /*
  * GET ONE
- * Authorize, query and filter
- * Returns data
+ * runs authorize, query and filter hooks
+ * returns data
  */
 
 function routeGetOne(router, db, model, hooks, indexes) {
@@ -31,8 +31,8 @@ function routeGetOne(router, db, model, hooks, indexes) {
 
 /*
  * GET MANY
- * Authorize, query and filter
- * Returns data
+ * runs authorize, query and filter hooks
+ * returns data
  */
 
 function routeGetMany(router, db, model, hooks, schemas, indexes) {
@@ -56,8 +56,8 @@ function routeGetMany(router, db, model, hooks, schemas, indexes) {
 
 /*
  * POST
- * Authorize, validate, check and query
- * Returns ID
+ * runs authorize, validate, check and query hooks
+ * returns ID
  */
 
 function routePost(router, db, model, hooks, schemas, indexes) {
@@ -86,8 +86,8 @@ function routePost(router, db, model, hooks, schemas, indexes) {
 
 /*
  * PATCH
- * Authorize, validate, check and query
- * No return value
+ * runs authorize, validate, check and query hooks
+ * no return value
  */
 
 function routePatch(router, db, model, hooks, schemas, indexes) {
@@ -116,8 +116,8 @@ function routePatch(router, db, model, hooks, schemas, indexes) {
 
 /*
  * DELETE
- * Authorize and query
- * No return value
+ * runs authorize and query hooks
+ * no return value
  */
 
 function routeDelete(router, db, model, hooks) {

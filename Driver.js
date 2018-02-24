@@ -6,22 +6,24 @@ const QueryBuilder = require('./QueryBuilder');
 // TODO: send a 400 error instead of a 500 when a badly formatted ID is received
 // TODO: group and rename params
 
-async function getOne(db, model, queryData, indexes, schemas) {
-  let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
-  return _getOne(db, model, queryData.id, indexes, schemas, [], allowedQueries);
-}
-
-async function _getOne(db, model, id, indexes, schemas, prevQueries, allowedQueries) {
+async function getNode(db, model, id, indexes, schemas, prevQueries, allowedQueries) {
+  // get the node from the database
   let result = await db.collection(model).findOne({
     _id: ObjectId(id)
   });
+
+  // populate referenced nodes
   if (result) {
+    // keep track of the query
     prevQueries.push({
       id,
       model
     });
+
+    // populate child nodes
     for (let ref of indexes[model]) {
       await Util.reassignNodes(result, ref.path, (childId) => {
+        // determine if the population should proceed
         if (
           Util.includesObject(prevQueries, {
             id: childId,
@@ -29,13 +31,23 @@ async function _getOne(db, model, id, indexes, schemas, prevQueries, allowedQuer
           }) ||
           !allowedQueries.includes(ref.model)
         ) {
+          // leave the id in place
           return childId;
         }
-        return _getOne(db, ref.model, childId, indexes, schemas, prevQueries, allowedQueries);
+        // get the child node
+        return getNode(db, ref.model, childId, indexes, schemas, prevQueries, allowedQueries);
       });
     }
   }
   return result;
+}
+
+async function getOne(db, model, queryData, indexes, schemas) {
+  // get a list of models to populate
+  let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
+
+  // run the query recursively
+  return getNode(db, model, queryData.id, indexes, schemas, [], allowedQueries);
 }
 
 async function getMany(db, model, queryData, indexes, schemas) {
@@ -49,7 +61,7 @@ async function getMany(db, model, queryData, indexes, schemas) {
     for (let result of results) {
       for (let ref of indexes[model]) {
         await Util.reassignNodes(result, ref.path, (id) => {
-          return _getOne(db, ref.model, id, indexes, schemas, [], allowedQueries);
+          return getNode(db, ref.model, id, indexes, schemas, [], allowedQueries);
         });
       }
     }
