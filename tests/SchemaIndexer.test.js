@@ -1,4 +1,4 @@
-const RelationIndexer = require('../RelationIndexer');
+const SchemaIndexer = require('../SchemaIndexer');
 
 const schema = {
   name: {
@@ -43,7 +43,7 @@ const schema = {
 };
 
 test('get correct relation paths', () => {
-  expect(RelationIndexer.index(schema)).toEqual([
+  expect(SchemaIndexer.index(schema, 'ref', ['model'])).toEqual([
     { path: ['telephone'], model: 'some-model' },
     { path: ['pets', null, 'name', 'first'], model: 'some-model' },
     { path: ['pets', null, 'age'], model: 'some-model' }

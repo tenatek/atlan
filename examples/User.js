@@ -12,6 +12,10 @@ module.exports = {
       type: 'ref',
       model: 'user'
     },
+    picture: {
+      type: 'file',
+      required: true
+    },
     posts: {
       type: 'array',
       elements: {
@@ -23,29 +27,22 @@ module.exports = {
 
   hooks: {
     getOne: {
-      authorize(req) {
-        if (req.get('Authorization') === 'true') return 'AUTHORIZED';
-        if (req.get('Authorization') === 'soso') return 'RESTRICTED';
-        return null;
-      },
-      filter(data, authorization) {
-        if (authorization === 'AUTHORIZED') return data;
-        if (authorization === 'RESTRICTED') {
-          return {
-            name: data.name
-          };
+      auth(req) {
+        if (req.get('Authorization') === 'true') {
+          return 'AUTHORIZED';
         }
         return null;
       }
     },
     post: {
-      authorize(req) {
-        if (req.get('Authorization') === 'true') return 'AUTHORIZED';
-        if (req.get('Authorization') === 'soso') return 'RESTRICTED';
+      auth(req) {
+        if (req.get('Authorization') === 'true') {
+          return 'AUTHORIZED';
+        }
         return null;
       },
-      check(data, authorization) {
-        if (authorization === 'RESTRICTED') return false;
+      before(authorization, req) {
+        req.body.picture = req.files.picture[0].fieldname;
         return true;
       }
     }

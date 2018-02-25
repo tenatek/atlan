@@ -20,7 +20,9 @@ function checkNode(schemas, schemaNode, pendingModels) {
     return false;
   }
 
-  if (!['string', 'number', 'boolean', 'object', 'array', 'ref'].includes(schemaNode.type)) {
+  if (
+    !['string', 'number', 'boolean', 'object', 'array', 'ref', 'file'].includes(schemaNode.type)
+  ) {
     // check that the node has a known type
     return false;
   }

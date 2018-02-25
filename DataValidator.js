@@ -3,15 +3,21 @@ const Driver = require('./Driver');
 async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
   // filters out unknown attributes
 
-  if (schemaNode === undefined) return false;
+  if (schemaNode === undefined) {
+    return false;
+  }
 
   // first-level validation
 
   if (typeof schemaNode.type !== 'string') {
-    if (dataNode == null || dataNode.constructor !== Object) return false;
+    if (dataNode == null || dataNode.constructor !== Object) {
+      return false;
+    }
     if (checkRequired) {
       for (let key in schemaNode) {
-        if (schemaNode[key].required && dataNode[key] === undefined) return false;
+        if (schemaNode[key].required && dataNode[key] === undefined) {
+          return false;
+        }
       }
     }
     for (let key in dataNode) {
@@ -19,22 +25,28 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
         return false;
       }
     }
-
-    // handles arrays
   } else if (schemaNode.type === 'array') {
-    if (dataNode == null || dataNode.constructor !== Array) return false;
+    // handles arrays
+
+    if (dataNode == null || dataNode.constructor !== Array) {
+      return false;
+    }
     for (let element of dataNode) {
       if (!await checkNode(schemas, schemaNode.elements, element, true, db)) {
         return false;
       }
     }
-
-    // handles objects
   } else if (schemaNode.type === 'object') {
-    if (dataNode == null || dataNode.constructor !== Object) return false;
+    // handles objects
+
+    if (dataNode == null || dataNode.constructor !== Object) {
+      return false;
+    }
     if (checkRequired) {
       for (let key in schemaNode.children) {
-        if (schemaNode.children[key].required && dataNode[key] === undefined) return false;
+        if (schemaNode.children[key].required && dataNode[key] === undefined) {
+          return false;
+        }
       }
     }
     for (let key in dataNode) {
@@ -42,18 +54,26 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
         return false;
       }
     }
-
-    // handles references
   } else if (schemaNode.type === 'ref') {
-    if (!await checkRef(schemas, schemaNode.model, dataNode, db)) return false;
+    // handles references
 
+    if (!await checkRef(schemas, schemaNode.model, dataNode, db)) {
+      return false;
+    }
+  } else if (schemaNode.type === 'file') {
+    // handles files
+
+    if (typeof dataNode !== 'string') {
+      return false;
+    }
+  } else if (typeof dataNode !== schemaNode.type) {
     // handles string, number, boolean
-  } else if (typeof dataNode !== schemaNode.type) return false;
+
+    return false;
+  }
 
   return true;
 }
-
-// TODO: change the getOne API to remove the object construction?
 
 async function checkRef(schemas, model, dataNode, db) {
   if (typeof dataNode === 'string') {

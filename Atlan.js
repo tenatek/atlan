@@ -1,9 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const SchemaValidator = require('./SchemaValidator');
+const SchemaIndexer = require('./SchemaIndexer');
 const HookValidator = require('./HookValidator');
-const RelationIndexer = require('./RelationIndexer');
 const Router = require('./Router');
 
 class Atlan {
@@ -12,11 +11,8 @@ class Atlan {
     this.d = null;
     this.schemas = {};
     this.hooks = {};
-    this.indexes = {};
-
-    // add JSON-parsing middleware to all routes
-
-    this.r.use(bodyParser.json());
+    this.refIndexes = {};
+    this.fileIndexes = {};
   }
 
   driver(err, db) {
@@ -58,7 +54,8 @@ class Atlan {
         SchemaValidator.validateSchema(this.schemas, schema, pendingModels)
       ) {
         this.schemas[name] = schema;
-        this.indexes[name] = RelationIndexer.index(schema);
+        this.refIndexes[name] = SchemaIndexer.index(schema, 'ref', ['model']);
+        this.fileIndexes[name] = SchemaIndexer.index(schema, 'file', ['required']);
       } else {
         throw new Error('Invalid schema.');
       }
@@ -76,7 +73,7 @@ class Atlan {
 
       // add routes to router
 
-      Router.route(this.r, this.d, name, hooks, this.schemas, this.indexes);
+      Router.route(this.r, this.d, name, hooks, this.refIndexes, this.schemas, this.fileIndexes);
     }
   }
 }
