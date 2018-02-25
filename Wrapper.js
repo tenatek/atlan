@@ -71,10 +71,10 @@ function query(middleware, model, db, refIndexes, schemas) {
   };
 }
 
-function validate(middleware, model, schemas, db) {
+function validate(middleware, model, db, refIndexes, schemas) {
   return async function (req, res, next) {
     try {
-      if (await middleware(db, schemas, model, req.body)) {
+      if (await middleware(db, refIndexes, schemas, model, req.body)) {
         next();
       } else {
         res.sendStatus(400);

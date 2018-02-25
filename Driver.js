@@ -129,6 +129,7 @@ function remove(db, model, queryData) {
 }
 
 module.exports = {
+  getNode,
   getOne,
   getMany,
   create,

@@ -1,6 +1,6 @@
 const Driver = require('./Driver');
 
-async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
+async function checkNode(refIndexes, schemas, schemaNode, dataNode, checkRequired, db) {
   // filters out unknown attributes
 
   if (schemaNode === undefined) {
@@ -21,7 +21,9 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
       }
     }
     for (let key in dataNode) {
-      if (!await checkNode(schemas, schemaNode[key], dataNode[key], checkRequired, db)) {
+      if (
+        !await checkNode(refIndexes, schemas, schemaNode[key], dataNode[key], checkRequired, db)
+      ) {
         return false;
       }
     }
@@ -32,7 +34,7 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
       return false;
     }
     for (let element of dataNode) {
-      if (!await checkNode(schemas, schemaNode.elements, element, true, db)) {
+      if (!await checkNode(refIndexes, schemas, schemaNode.elements, element, true, db)) {
         return false;
       }
     }
@@ -50,14 +52,23 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
       }
     }
     for (let key in dataNode) {
-      if (!await checkNode(schemas, schemaNode.children[key], dataNode[key], checkRequired, db)) {
+      if (
+        !await checkNode(
+          refIndexes,
+          schemas,
+          schemaNode.children[key],
+          dataNode[key],
+          checkRequired,
+          db
+        )
+      ) {
         return false;
       }
     }
   } else if (schemaNode.type === 'ref') {
     // handles references
 
-    if (!await checkRef(schemas, schemaNode.model, dataNode, db)) {
+    if (!await checkRef(refIndexes, schemas, schemaNode.model, dataNode, db)) {
       return false;
     }
   } else if (schemaNode.type === 'file') {
@@ -75,9 +86,9 @@ async function checkNode(schemas, schemaNode, dataNode, checkRequired, db) {
   return true;
 }
 
-async function checkRef(schemas, model, dataNode, db) {
+async function checkRef(refIndexes, schemas, model, dataNode, db) {
   if (typeof dataNode === 'string') {
-    if ((await Driver.getOne(db, model, { id: dataNode })) === null) {
+    if ((await Driver.getNode(db, model, dataNode, refIndexes, schemas, [], [])) === null) {
       return false;
     }
   } else if (dataNode != null && dataNode.constructor === Object) {
@@ -91,12 +102,12 @@ async function checkRef(schemas, model, dataNode, db) {
   return true;
 }
 
-async function validateCreateRequest(db, schemas, model, data) {
-  return checkNode(schemas, schemas[model], data, true, db);
+async function validateCreateRequest(db, refIndexes, schemas, model, data) {
+  return checkNode(refIndexes, schemas, schemas[model], data, true, db);
 }
 
-async function validateUpdateRequest(db, schemas, model, data) {
-  return checkNode(schemas, schemas[model], data, false, db);
+async function validateUpdateRequest(db, refIndexes, schemas, model, data) {
+  return checkNode(refIndexes, schemas, schemas[model], data, false, db);
 }
 
 module.exports = { validateCreateRequest, validateUpdateRequest };

@@ -92,7 +92,7 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(DataValidator.validateCreateRequest, model, schemas, db));
+  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, db, refIndexes, schemas));
 
   // package-defined query middleware
   middleware.push(Wrapper.query(Driver.create, model, db, refIndexes));
@@ -135,7 +135,7 @@ function routePatch(router, db, model, hooks, refIndexes, schemas, fileIndexes) 
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, schemas, db));
+  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, db, refIndexes, schemas));
 
   // package-defined query middleware
   middleware.push(Wrapper.query(Driver.update, model, db, refIndexes));
