@@ -17,7 +17,7 @@
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "global-require": "off",
     "arrow-body-style": ["error", "always"],
-    "max-len": ["error", { "code": 100 }]
+    "max-len": "off"
   },
   "env": {
     "jest": true

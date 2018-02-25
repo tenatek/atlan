@@ -92,7 +92,13 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, db, refIndexes, schemas));
+  middleware.push(Wrapper.validate(
+    DataValidator.validateUpdateRequest,
+    model,
+    db,
+    refIndexes,
+    schemas
+  ));
 
   // package-defined query middleware
   middleware.push(Wrapper.query(Driver.create, model, db, refIndexes));
@@ -108,7 +114,15 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
  * no return value
  */
 
-function routePatch(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
+function routePatch(
+  router,
+  db,
+  model,
+  hooks,
+  refIndexes,
+  schemas,
+  fileIndexes
+) {
   let middleware = [];
 
   if (fileIndexes[model].length !== 0) {
@@ -135,7 +149,13 @@ function routePatch(router, db, model, hooks, refIndexes, schemas, fileIndexes) 
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(DataValidator.validateUpdateRequest, model, db, refIndexes, schemas));
+  middleware.push(Wrapper.validate(
+    DataValidator.validateUpdateRequest,
+    model,
+    db,
+    refIndexes,
+    schemas
+  ));
 
   // package-defined query middleware
   middleware.push(Wrapper.query(Driver.update, model, db, refIndexes));
