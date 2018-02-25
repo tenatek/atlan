@@ -71,8 +71,7 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
   if (fileIndexes[model].length !== 0) {
     let files = fileIndexes[model].map((element) => {
       return {
-        name: element.path[element.path.length - 1],
-        maxCount: 1
+        name: element.path[element.path.length - 1]
       };
     });
     middleware.push(multer().fields(files));
@@ -128,8 +127,7 @@ function routePatch(
   if (fileIndexes[model].length !== 0) {
     let files = fileIndexes[model].map((element) => {
       return {
-        name: element.path[element.path.length - 1],
-        maxCount: 1
+        name: element.path[element.path.length - 1]
       };
     });
     middleware.push(multer().fields(files));

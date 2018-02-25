@@ -55,7 +55,7 @@ class Atlan {
       ) {
         this.schemas[name] = schema;
         this.refIndexes[name] = SchemaIndexer.index(schema, 'ref', ['model']);
-        this.fileIndexes[name] = SchemaIndexer.index(schema, 'file', ['required']);
+        this.fileIndexes[name] = SchemaIndexer.index(schema, 'file', []);
       } else {
         throw new Error('Invalid schema.');
       }
