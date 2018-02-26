@@ -23,10 +23,7 @@ function validateMiddleware(middleware) {
       return false;
     }
     for (let middlewareFunction of middleware[method]) {
-      if (
-        middlewareFunction == null ||
-        middlewareFunction.constructor !== Function
-      ) {
+      if (typeof middlewareFunction !== 'function') {
         return false;
       }
     }

@@ -23,10 +23,7 @@ function validateHooks(hooks) {
       return false;
     }
     for (let hook in hooks[method]) {
-      if (
-        hooks[method][hook] == null ||
-        hooks[method][hook].constructor !== Function
-      ) {
+      if (typeof hooks[method][hook] !== 'function') {
         return false;
       }
     }
