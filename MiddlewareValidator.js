@@ -24,8 +24,8 @@ function validateMiddleware(middleware) {
     }
     for (let middlewareFunction of middleware[method]) {
       if (
-        middleware[method][middlewareFunction] == null ||
-        middleware[method][middlewareFunction].constructor !== Function
+        middlewareFunction == null ||
+        middlewareFunction.constructor !== Function
       ) {
         return false;
       }
