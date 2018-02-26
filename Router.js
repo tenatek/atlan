@@ -3,7 +3,7 @@ const multer = require('multer');
 
 const Driver = require('./Driver');
 const DataValidator = require('./DataValidator');
-const Wrapper = require('./Wrapper');
+const MiddlewareWrapper = require('./MiddlewareWrapper');
 
 /*
  * GET ONE
@@ -11,23 +11,27 @@ const Wrapper = require('./Wrapper');
  * returns data
  */
 
-function routeGetOne(router, db, model, hooks, refIndexes) {
-  let middleware = [];
+function routeGetOne(router, db, model, hooks, middleware, refIndexes) {
+  let middlewareArray = [];
+
+  if (middleware) {
+    middlewareArray = middleware;
+  }
 
   // developer-defined authorization middleware, if it exists
   if (hooks && hooks.auth) {
-    middleware.push(Wrapper.auth(hooks.auth));
+    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.getOne, model, db, refIndexes));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.getOne, model, db, refIndexes));
 
   // developer-defined post-processing middleware, if it exists
   if (hooks && hooks.after) {
-    middleware.push(Wrapper.after(hooks.after));
+    middlewareArray.push(MiddlewareWrapper.after(hooks.after));
   }
 
-  router.get(`/${model}/:id`, ...middleware, (req, res) => {
+  router.get(`/${model}/:id`, ...middlewareArray, (req, res) => {
     res.status(200).send(res.locals.data);
   });
 }
@@ -38,23 +42,35 @@ function routeGetOne(router, db, model, hooks, refIndexes) {
  * returns data
  */
 
-function routeGetMany(router, db, model, hooks, refIndexes, schemas) {
-  let middleware = [];
+function routeGetMany(
+  router,
+  db,
+  model,
+  hooks,
+  middleware,
+  refIndexes,
+  schemas
+) {
+  let middlewareArray = [];
+
+  if (middleware) {
+    middlewareArray = middleware;
+  }
 
   // developer-defined authorization middleware, if it exists
   if (hooks && hooks.auth) {
-    middleware.push(Wrapper.auth(hooks.auth));
+    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.getMany, model, db, refIndexes, schemas));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.getMany, model, db, refIndexes, schemas));
 
   // developer-defined post-processing middleware, if it exists
   if (hooks && hooks.after) {
-    middleware.push(Wrapper.after(hooks.after));
+    middlewareArray.push(MiddlewareWrapper.after(hooks.after));
   }
 
-  router.get(`/${model}`, ...middleware, (req, res) => {
+  router.get(`/${model}`, ...middlewareArray, (req, res) => {
     res.status(200).send(res.locals.data);
   });
 }
@@ -65,8 +81,21 @@ function routeGetMany(router, db, model, hooks, refIndexes, schemas) {
  * returns ID
  */
 
-function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
-  let middleware = [];
+function routePost(
+  router,
+  db,
+  model,
+  hooks,
+  middleware,
+  refIndexes,
+  schemas,
+  fileIndexes
+) {
+  let middlewareArray = [];
+
+  if (middleware) {
+    middlewareArray = middleware;
+  }
 
   if (fileIndexes[model].length !== 0) {
     let files = fileIndexes[model].map((element) => {
@@ -74,24 +103,24 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
         name: element.path[element.path.length - 1]
       };
     });
-    middleware.push(multer().fields(files));
-    middleware.push(Wrapper.parse());
+    middlewareArray.push(multer().fields(files));
+    middlewareArray.push(MiddlewareWrapper.parse());
   } else {
-    middleware.push(bodyParser.json());
+    middlewareArray.push(bodyParser.json());
   }
 
   // developer-defined authorization middleware, if it exists
   if (hooks && hooks.auth) {
-    middleware.push(Wrapper.auth(hooks.auth));
+    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
   }
 
   // developer-defined custom validation middleware, if it exists
   if (hooks && hooks.before) {
-    middleware.push(Wrapper.before(hooks.before));
+    middlewareArray.push(MiddlewareWrapper.before(hooks.before));
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(
+  middlewareArray.push(MiddlewareWrapper.validate(
     DataValidator.validateUpdateRequest,
     model,
     db,
@@ -100,9 +129,9 @@ function routePost(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
   ));
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.create, model, db, refIndexes));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.create, model, db, refIndexes));
 
-  router.post(`/${model}`, ...middleware, (req, res) => {
+  router.post(`/${model}`, ...middlewareArray, (req, res) => {
     res.status(201).send(res.locals.data);
   });
 }
@@ -118,11 +147,16 @@ function routePatch(
   db,
   model,
   hooks,
+  middleware,
   refIndexes,
   schemas,
   fileIndexes
 ) {
-  let middleware = [];
+  let middlewareArray = [];
+
+  if (middleware) {
+    middlewareArray = middleware;
+  }
 
   if (fileIndexes[model].length !== 0) {
     let files = fileIndexes[model].map((element) => {
@@ -130,24 +164,24 @@ function routePatch(
         name: element.path[element.path.length - 1]
       };
     });
-    middleware.push(multer().fields(files));
-    middleware.push(Wrapper.parse());
+    middlewareArray.push(multer().fields(files));
+    middlewareArray.push(MiddlewareWrapper.parse());
   } else {
-    middleware.push(bodyParser.json());
+    middlewareArray.push(bodyParser.json());
   }
 
   // developer-defined authorization middleware, if it exists
   if (hooks && hooks.auth) {
-    middleware.push(Wrapper.auth(hooks.auth));
+    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
   }
 
   // developer-defined custom validation middleware, if it exists
   if (hooks && hooks.before) {
-    middleware.push(Wrapper.before(hooks.before));
+    middlewareArray.push(MiddlewareWrapper.before(hooks.before));
   }
 
   // package-defined schema validation middleware
-  middleware.push(Wrapper.validate(
+  middlewareArray.push(MiddlewareWrapper.validate(
     DataValidator.validateUpdateRequest,
     model,
     db,
@@ -156,9 +190,9 @@ function routePatch(
   ));
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.update, model, db, refIndexes));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.update, model, db, refIndexes));
 
-  router.patch(`/${model}/:id`, ...middleware, (req, res) => {
+  router.patch(`/${model}/:id`, ...middlewareArray, (req, res) => {
     res.sendStatus(200);
   });
 }
@@ -169,28 +203,67 @@ function routePatch(
  * no return value
  */
 
-function routeDelete(router, db, model, hooks) {
-  let middleware = [];
+function routeDelete(router, db, model, hooks, middleware) {
+  let middlewareArray = [];
+
+  if (middleware) {
+    middlewareArray = middleware;
+  }
 
   // developer-defined authorization middleware, if it exists
   if (hooks && hooks.auth) {
-    middleware.push(Wrapper.auth(hooks.auth));
+    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
   }
 
   // package-defined query middleware
-  middleware.push(Wrapper.query(Driver.remove, model, db));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.remove, model, db));
 
-  router.delete(`/${model}/:id`, ...middleware, (req, res) => {
+  router.delete(`/${model}/:id`, ...middlewareArray, (req, res) => {
     res.sendStatus(200);
   });
 }
 
-function route(router, db, model, hooks, refIndexes, schemas, fileIndexes) {
-  routeGetOne(router, db, model, hooks.getOne, refIndexes);
-  routeGetMany(router, db, model, hooks.getMany, refIndexes, schemas);
-  routePost(router, db, model, hooks.post, refIndexes, schemas, fileIndexes);
-  routePatch(router, db, model, hooks.patch, refIndexes, schemas, fileIndexes);
-  routeDelete(router, db, model, hooks.delete);
+function route(
+  router,
+  db,
+  model,
+  hooks,
+  middleware,
+  refIndexes,
+  schemas,
+  fileIndexes
+) {
+  routeGetOne(router, db, model, hooks.getOne, middleware.getOne, refIndexes);
+  routeGetMany(
+    router,
+    db,
+    model,
+    hooks.getMany,
+    middleware.getMany,
+    refIndexes,
+    schemas
+  );
+  routePost(
+    router,
+    db,
+    model,
+    hooks.post,
+    middleware.post,
+    refIndexes,
+    schemas,
+    fileIndexes
+  );
+  routePatch(
+    router,
+    db,
+    model,
+    hooks.patch,
+    middleware.patch,
+    refIndexes,
+    schemas,
+    fileIndexes
+  );
+  routeDelete(router, db, model, hooks.delete, middleware.delete);
 }
 
 module.exports = { route };

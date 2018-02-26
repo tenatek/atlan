@@ -3,6 +3,7 @@ const express = require('express');
 const SchemaValidator = require('./SchemaValidator');
 const SchemaIndexer = require('./SchemaIndexer');
 const HookValidator = require('./HookValidator');
+const MiddlewareValidator = require('./MiddlewareValidator');
 const Router = require('./Router');
 
 class Atlan {
@@ -11,6 +12,7 @@ class Atlan {
     this.d = null;
     this.schemas = {};
     this.hooks = {};
+    this.middleware = {};
     this.refIndexes = {};
     this.fileIndexes = {};
   }
@@ -45,7 +47,7 @@ class Atlan {
 
     for (let model of modelArray) {
       let [name, definition] = model;
-      let { schema, hooks } = definition;
+      let { schema, hooks, middleware } = definition;
 
       // add schema to schema store
 
@@ -63,17 +65,37 @@ class Atlan {
       // add hooks to hook store
 
       if (hooks) {
-        if (HookValidator.validateHooks(hooks)) this.hooks[name] = hooks;
-        else {
+        if (HookValidator.validateHooks(hooks)) {
+          this.hooks[name] = hooks;
+        } else {
           throw new Error('Invalid hooks.');
         }
       } else {
         hooks = {};
       }
 
+      if (middleware) {
+        if (MiddlewareValidator.validateMiddleware(middleware)) {
+          this.middleware[name] = middleware;
+        } else {
+          throw new Error('Invalid middleware.');
+        }
+      } else {
+        middleware = {};
+      }
+
       // add routes to router
 
-      Router.route(this.r, this.d, name, hooks, this.refIndexes, this.schemas, this.fileIndexes);
+      Router.route(
+        this.r,
+        this.d,
+        name,
+        hooks,
+        middleware,
+        this.refIndexes,
+        this.schemas,
+        this.fileIndexes
+      );
     }
   }
 }
