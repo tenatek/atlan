@@ -1,6 +1,13 @@
 const Driver = require('./Driver');
 
-async function checkNode(refIndexes, schemas, schemaNode, dataNode, checkRequired, db) {
+async function checkNode(
+  refIndexes,
+  schemas,
+  schemaNode,
+  dataNode,
+  checkRequired,
+  db
+) {
   // filters out unknown attributes
 
   if (schemaNode === undefined) {
@@ -22,7 +29,14 @@ async function checkNode(refIndexes, schemas, schemaNode, dataNode, checkRequire
     }
     for (let key in dataNode) {
       if (
-        !await checkNode(refIndexes, schemas, schemaNode[key], dataNode[key], checkRequired, db)
+        !await checkNode(
+          refIndexes,
+          schemas,
+          schemaNode[key],
+          dataNode[key],
+          checkRequired,
+          db
+        )
       ) {
         return false;
       }
@@ -34,7 +48,16 @@ async function checkNode(refIndexes, schemas, schemaNode, dataNode, checkRequire
       return false;
     }
     for (let element of dataNode) {
-      if (!await checkNode(refIndexes, schemas, schemaNode.elements, element, true, db)) {
+      if (
+        !await checkNode(
+          refIndexes,
+          schemas,
+          schemaNode.elements,
+          element,
+          true,
+          db
+        )
+      ) {
         return false;
       }
     }
@@ -88,11 +111,23 @@ async function checkNode(refIndexes, schemas, schemaNode, dataNode, checkRequire
 
 async function checkRef(refIndexes, schemas, model, dataNode, db) {
   if (typeof dataNode === 'string') {
-    if ((await Driver.getNode(db, model, dataNode, refIndexes, schemas, [], [])) === null) {
+    if (
+      (await Driver.getNode(
+        db,
+        model,
+        dataNode,
+        refIndexes,
+        schemas,
+        [],
+        []
+      )) === null
+    ) {
       return false;
     }
   } else if (dataNode != null && dataNode.constructor === Object) {
-    if (!await validateCreateRequest(db, schemas, model, dataNode)) {
+    if (
+      !await validateCreateRequest(db, refIndexes, schemas, model, dataNode)
+    ) {
       return false;
     }
   } else {

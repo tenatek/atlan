@@ -19,7 +19,7 @@ function validateHooks(hooks) {
     if (hooks[method] == null || hooks[method].constructor !== Object) {
       return false;
     }
-    if (!Util.checkPossibleKeys(hooks[method], ['auth', 'before', 'after'])) {
+    if (!Util.checkPossibleKeys(hooks[method], ['before', 'after'])) {
       return false;
     }
     for (let hook in hooks[method]) {

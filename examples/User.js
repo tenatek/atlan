@@ -13,8 +13,7 @@ module.exports = {
       model: 'user'
     },
     picture: {
-      type: 'file',
-      required: true
+      type: 'file'
     },
     posts: {
       type: 'array',
@@ -26,24 +25,9 @@ module.exports = {
   },
 
   hooks: {
-    getOne: {
-      auth(req) {
-        if (req.get('Authorization') === 'true') {
-          return 'AUTHORIZED';
-        }
-        return null;
-      }
-    },
     post: {
-      auth(req) {
-        if (req.get('Authorization') === 'true') {
-          return 'AUTHORIZED';
-        }
-        return null;
-      },
-      before(authorization, req) {
-        req.body.picture = req.files.picture[0].fieldname;
-        return true;
+      before(req, res, next) {
+        next();
       }
     }
   }

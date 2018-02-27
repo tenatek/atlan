@@ -18,9 +18,9 @@ function routeGetOne(router, db, model, hooks, middleware, refIndexes) {
     middlewareArray = middleware;
   }
 
-  // developer-defined authorization middleware, if it exists
-  if (hooks && hooks.auth) {
-    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
+  // developer-defined pre-processing middleware, if it exists
+  if (hooks && hooks.before) {
+    middlewareArray = middlewareArray.concat(hooks.before);
   }
 
   // package-defined query middleware
@@ -28,7 +28,7 @@ function routeGetOne(router, db, model, hooks, middleware, refIndexes) {
 
   // developer-defined post-processing middleware, if it exists
   if (hooks && hooks.after) {
-    middlewareArray.push(MiddlewareWrapper.after(hooks.after));
+    middlewareArray = middlewareArray.concat(hooks.after);
   }
 
   router.get(`/${model}/:id`, ...middlewareArray, (req, res) => {
@@ -57,9 +57,9 @@ function routeGetMany(
     middlewareArray = middleware;
   }
 
-  // developer-defined authorization middleware, if it exists
-  if (hooks && hooks.auth) {
-    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
+  // developer-defined pre-processing middleware, if it exists
+  if (hooks && hooks.before) {
+    middlewareArray = middlewareArray.concat(hooks.before);
   }
 
   // package-defined query middleware
@@ -67,7 +67,7 @@ function routeGetMany(
 
   // developer-defined post-processing middleware, if it exists
   if (hooks && hooks.after) {
-    middlewareArray.push(MiddlewareWrapper.after(hooks.after));
+    middlewareArray = middlewareArray.concat(hooks.after);
   }
 
   router.get(`/${model}`, ...middlewareArray, (req, res) => {
@@ -109,14 +109,9 @@ function routePost(
     middlewareArray.push(bodyParser.json());
   }
 
-  // developer-defined authorization middleware, if it exists
-  if (hooks && hooks.auth) {
-    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
-  }
-
-  // developer-defined custom validation middleware, if it exists
+  // developer-defined pre-processing middleware, if it exists
   if (hooks && hooks.before) {
-    middlewareArray.push(MiddlewareWrapper.before(hooks.before));
+    middlewareArray = middlewareArray.concat(hooks.before);
   }
 
   // package-defined schema validation middleware
@@ -130,6 +125,11 @@ function routePost(
 
   // package-defined query middleware
   middlewareArray.push(MiddlewareWrapper.query(Driver.create, model, db, refIndexes));
+
+  // developer-defined post-processing middleware, if it exists
+  if (hooks && hooks.after) {
+    middlewareArray = middlewareArray.concat(hooks.after);
+  }
 
   router.post(`/${model}`, ...middlewareArray, (req, res) => {
     res.status(201).send(res.locals.data);
@@ -170,14 +170,9 @@ function routePatch(
     middlewareArray.push(bodyParser.json());
   }
 
-  // developer-defined authorization middleware, if it exists
-  if (hooks && hooks.auth) {
-    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
-  }
-
-  // developer-defined custom validation middleware, if it exists
+  // developer-defined pre-processing middleware, if it exists
   if (hooks && hooks.before) {
-    middlewareArray.push(MiddlewareWrapper.before(hooks.before));
+    middlewareArray = middlewareArray.concat(hooks.before);
   }
 
   // package-defined schema validation middleware
@@ -191,6 +186,11 @@ function routePatch(
 
   // package-defined query middleware
   middlewareArray.push(MiddlewareWrapper.query(Driver.update, model, db, refIndexes));
+
+  // developer-defined post-processing middleware, if it exists
+  if (hooks && hooks.after) {
+    middlewareArray = middlewareArray.concat(hooks.after);
+  }
 
   router.patch(`/${model}/:id`, ...middlewareArray, (req, res) => {
     res.sendStatus(200);
@@ -210,13 +210,18 @@ function routeDelete(router, db, model, hooks, middleware) {
     middlewareArray = middleware;
   }
 
-  // developer-defined authorization middleware, if it exists
-  if (hooks && hooks.auth) {
-    middlewareArray.push(MiddlewareWrapper.auth(hooks.auth));
+  // developer-defined pre-processing middleware, if it exists
+  if (hooks && hooks.before) {
+    middlewareArray = middlewareArray.concat(hooks.before);
   }
 
   // package-defined query middleware
   middlewareArray.push(MiddlewareWrapper.query(Driver.remove, model, db));
+
+  // developer-defined post-processing middleware, if it exists
+  if (hooks && hooks.after) {
+    middlewareArray = middlewareArray.concat(hooks.after);
+  }
 
   router.delete(`/${model}/:id`, ...middlewareArray, (req, res) => {
     res.sendStatus(200);
