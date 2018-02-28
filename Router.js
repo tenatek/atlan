@@ -116,7 +116,7 @@ function routePost(
 
   // package-defined schema validation middleware
   middlewareArray.push(MiddlewareWrapper.validate(
-    DataValidator.validateUpdateRequest,
+    DataValidator.validateCreateRequest,
     model,
     db,
     refIndexes,
