@@ -11,7 +11,7 @@ const MiddlewareWrapper = require('./MiddlewareWrapper');
  * returns data
  */
 
-function routeGetOne(router, db, model, hooks, middleware, refIndexes) {
+function routeGetOne(router, db, model, hooks, middleware, refIndexes, schemas) {
   let middlewareArray = [];
 
   if (middleware) {
@@ -24,7 +24,7 @@ function routeGetOne(router, db, model, hooks, middleware, refIndexes) {
   }
 
   // package-defined query middleware
-  middlewareArray.push(MiddlewareWrapper.query(Driver.getOne, model, db, refIndexes));
+  middlewareArray.push(MiddlewareWrapper.query(Driver.getOne, model, db, refIndexes, schemas));
 
   // developer-defined post-processing middleware, if it exists
   if (hooks && hooks.after) {
@@ -238,7 +238,7 @@ function route(
   schemas,
   fileIndexes
 ) {
-  routeGetOne(router, db, model, hooks.getOne, middleware.getOne, refIndexes);
+  routeGetOne(router, db, model, hooks.getOne, middleware.getOne, refIndexes, schemas);
   routeGetMany(
     router,
     db,
