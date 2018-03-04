@@ -6,7 +6,15 @@ const QueryBuilder = require('./QueryBuilder');
 // TODO: send a 400 error instead of a 500 when a badly formatted ID is received
 // TODO: group and rename params
 
-async function getNode(db, model, id, refIndexes, schemas, prevQueries, allowedQueries) {
+async function getNode(
+  db,
+  model,
+  id,
+  refIndexes,
+  schemas,
+  prevQueries,
+  allowedQueries
+) {
   // get the node from the database
   let result = await db.collection(model).findOne({
     _id: ObjectId(id)
@@ -14,6 +22,8 @@ async function getNode(db, model, id, refIndexes, schemas, prevQueries, allowedQ
 
   // populate referenced nodes
   if (result) {
+    // cast id to string
+    result._id = result._id.toString();
     // keep track of the query
     prevQueries.push({
       id,
@@ -35,7 +45,15 @@ async function getNode(db, model, id, refIndexes, schemas, prevQueries, allowedQ
           return childId;
         }
         // get the child node
-        return getNode(db, ref.model, childId, refIndexes, schemas, prevQueries, allowedQueries);
+        return getNode(
+          db,
+          ref.model,
+          childId,
+          refIndexes,
+          schemas,
+          prevQueries,
+          allowedQueries
+        );
       });
     }
   }
@@ -47,7 +65,15 @@ async function getOne(db, model, queryData, refIndexes, schemas) {
   let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
 
   // run the query recursively
-  return getNode(db, model, queryData.id, refIndexes, schemas, [], allowedQueries);
+  return getNode(
+    db,
+    model,
+    queryData.id,
+    refIndexes,
+    schemas,
+    [],
+    allowedQueries
+  );
 }
 
 async function getMany(db, model, queryData, refIndexes, schemas) {
@@ -59,6 +85,8 @@ async function getMany(db, model, queryData, refIndexes, schemas) {
   let allowedQueries = QueryBuilder.populate(queryData.params, schemas);
 
   for (let result of results) {
+    // cast id to string
+    result._id = result._id.toString();
     // initialize list of already performed queries
     let prevQueries = [
       {
@@ -80,7 +108,15 @@ async function getMany(db, model, queryData, refIndexes, schemas) {
           return childId;
         }
         // get the child node
-        return getNode(db, ref.model, childId, refIndexes, schemas, prevQueries, allowedQueries);
+        return getNode(
+          db,
+          ref.model,
+          childId,
+          refIndexes,
+          schemas,
+          prevQueries,
+          allowedQueries
+        );
       });
     }
   }
