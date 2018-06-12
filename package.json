@@ -2,7 +2,13 @@
   "name": "atlan",
   "version": "0.2.12",
   "description": "Quickly create a CRUD API with Express and MongoDB.",
-  "keywords": ["CRUD", "API", "Node.js", "Express", "MongoDB"],
+  "keywords": [
+    "CRUD",
+    "API",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
   "main": "Atlan.js",
   "scripts": {
     "test": "jest"
@@ -13,6 +19,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "aniame": "^1.0.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "lodash": "^4.17.10",

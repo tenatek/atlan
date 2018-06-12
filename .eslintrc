@@ -1,25 +1,20 @@
 {
-  "extends": "airbnb-base",
+  "extends": "eslint:recommended",
   "rules": {
-    "no-use-before-define": "off",
-    "no-underscore-dangle": "off",
-    "no-param-reassign": "off",
-    "no-restricted-syntax": "off",
-    "no-await-in-loop": "off",
-    "no-multiple-empty-lines": ["error", { "max": 1 }],
-    "guard-for-in": "off",
-    "prefer-const": "off",
-    "padded-blocks": "off",
-    "comma-dangle": ["error", "never"],
-    "valid-typeof": "off",
-    "func-names": "off",
-    "import/no-dynamic-require": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "global-require": "off",
     "arrow-body-style": ["error", "always"],
-    "max-len": "off"
+    "brace-style": "error",
+    "comma-dangle": ["error", "never"],
+    "curly": "error",
+    "indent": ["error", 2],
+    "max-len": ["error", { "ignoreComments": true }],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "padded-blocks": ["error", { "classes": "always" }]
   },
   "env": {
-    "jest": true
+    "jest": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
   }
 }

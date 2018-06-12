@@ -1,12 +1,14 @@
 const express = require('express');
+const Aniame = require('aniame');
 
 const SchemaValidator = require('./SchemaValidator');
 const SchemaIndexer = require('./SchemaIndexer');
-const HookValidator = require('./HookValidator');
-const MiddlewareValidator = require('./MiddlewareValidator');
-const Router = require('./Router');
+const HookValidator = require('./lib/HookValidator');
+const MiddlewareValidator = require('./lib/MiddlewareValidator');
+const Router = require('./lib/Router');
 
 class Atlan {
+
   constructor() {
     this.r = express.Router();
     this.d = null;
@@ -33,8 +35,11 @@ class Atlan {
     // parse params
 
     let modelArray;
-    if (args.length === 2) modelArray = [args];
-    else [modelArray] = args;
+    if (args.length === 2) {
+      modelArray = [args];
+    } else {
+      [modelArray] = args;
+    }
 
     // get names of pending models for schema cross-ref validation
 
@@ -98,6 +103,7 @@ class Atlan {
       );
     }
   }
+
 }
 
 module.exports = Atlan;
