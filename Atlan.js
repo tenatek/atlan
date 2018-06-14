@@ -1,109 +1,28 @@
 const express = require('express');
 const Aniame = require('aniame');
 
-const SchemaValidator = require('./SchemaValidator');
-const SchemaIndexer = require('./SchemaIndexer');
-const HookValidator = require('./lib/HookValidator');
-const MiddlewareValidator = require('./lib/MiddlewareValidator');
+const Driver = require('./lib/Driver');
 const Router = require('./lib/Router');
+const HookValidator = require('./lib/HookValidator');
 
-class Atlan {
+function atlan(database, models) {
+  let router = express.Router();
+  let driver = new Driver(database);
 
-  constructor() {
-    this.r = express.Router();
-    this.d = null;
-    this.schemas = {};
-    this.hooks = {};
-    this.middleware = {};
-    this.refIndexes = {};
-    this.fileIndexes = {};
+  let modelNames = Object.keys(models);
+  for (let modelName of modelNames) {
+    if (!Aniame.validateSchema(models[modelName].schema, modelNames)) {
+      throw new Error(`Invalid schema: ${modelName}.`);
+    }
+    if (!HookValidator.validateHooks(models[modelName])) {
+      throw new Error(`Invalid hooks: ${modelName}.`);
+    }
+    let index = Aniame.indexSchema(models[modelName].schema, ['ref']);
+    driver.addIndex(modelName, index);
+    Router.createRoutes(models, modelName, driver, router);
   }
 
-  driver(err, db) {
-    if (err) {
-      throw new Error('Error establishing a database connection.');
-    } else {
-      this.d = db;
-    }
-  }
-
-  router() {
-    return this.r;
-  }
-
-  async model(...args) {
-    // parse params
-
-    let modelArray;
-    if (args.length === 2) {
-      modelArray = [args];
-    } else {
-      [modelArray] = args;
-    }
-
-    // get names of pending models for schema cross-ref validation
-
-    let pendingModels = [];
-    for (let model of modelArray) {
-      pendingModels.push(model[0]);
-    }
-
-    // process models
-
-    for (let model of modelArray) {
-      let [name, definition] = model;
-      let { schema, hooks, middleware } = definition;
-
-      // add schema to schema store
-
-      if (
-        !this.schemas[name] &&
-        SchemaValidator.validateSchema(this.schemas, schema, pendingModels)
-      ) {
-        this.schemas[name] = schema;
-        this.refIndexes[name] = SchemaIndexer.index(schema, 'ref', ['model']);
-        this.fileIndexes[name] = SchemaIndexer.index(schema, 'file', []);
-      } else {
-        throw new Error('Invalid schema.');
-      }
-
-      // add hooks to hook store
-
-      if (hooks) {
-        if (HookValidator.validateHooks(hooks)) {
-          this.hooks[name] = hooks;
-        } else {
-          throw new Error('Invalid hooks.');
-        }
-      } else {
-        hooks = {};
-      }
-
-      if (middleware) {
-        if (MiddlewareValidator.validateMiddleware(middleware)) {
-          this.middleware[name] = middleware;
-        } else {
-          throw new Error('Invalid middleware.');
-        }
-      } else {
-        middleware = {};
-      }
-
-      // add routes to router
-
-      Router.route(
-        this.r,
-        this.d,
-        name,
-        hooks,
-        middleware,
-        this.refIndexes,
-        this.schemas,
-        this.fileIndexes
-      );
-    }
-  }
-
+  return router;
 }
 
-module.exports = Atlan;
+module.exports = atlan;

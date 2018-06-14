@@ -3,12 +3,16 @@
   "rules": {
     "arrow-body-style": ["error", "always"],
     "brace-style": "error",
+    "class-methods-use-this": "error",
     "comma-dangle": ["error", "never"],
     "curly": "error",
+    "eol-last": ["error", "always"],
     "indent": ["error", 2],
     "max-len": ["error", { "ignoreComments": true }],
     "no-multiple-empty-lines": ["error", { "max": 1 }],
-    "padded-blocks": ["error", { "classes": "always" }]
+    "no-var": "error",
+    "padded-blocks": ["error", { "classes": "always" }],
+    "prefer-template": "error"
   },
   "env": {
     "jest": true,

@@ -19,7 +19,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "aniame": "^1.0.0",
+    "aniame": "^1.2.1",
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
