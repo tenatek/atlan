@@ -17,6 +17,7 @@
   "contributors": [
     "Ludovic Cyril Michel <ludovic@tenatek.com> (https://github.com/ludoviccyril)"
   ],
+  "repository": "github:tenatek/atlan",
   "license": "MIT",
   "dependencies": {
     "aniame": "^1.2.1",
