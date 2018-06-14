@@ -1,5 +1,4 @@
-node_modules
 examples
 tests
 .eslintrc
-.DS_Store
+.gitignore
