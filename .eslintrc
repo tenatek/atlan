@@ -12,7 +12,8 @@
     "no-multiple-empty-lines": ["error", { "max": 1 }],
     "no-var": "error",
     "padded-blocks": ["error", { "classes": "always" }],
-    "prefer-template": "error"
+    "prefer-template": "error",
+    "spaced-comment": ["error", "always"]
   },
   "env": {
     "jest": true,
