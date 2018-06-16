@@ -27,7 +27,7 @@ afterAll(async () => {
   await connection.close();
 });
 
-test('simple insert of documents', async () => {
+test('simple insert', async () => {
   await driver.insertDoc('jedi', {
     name: 'Qui-gon Jinn',
     origin: 'Coruscant'
@@ -48,7 +48,7 @@ test('simple insert of documents', async () => {
   ]);
 });
 
-test('nested insert of documents', async () => {
+test('nested insert', async () => {
   await driver.insertDoc('jedi', {
     name: 'Anakin Skywalker',
     origin: 'Tatooine',
@@ -81,7 +81,7 @@ test('nested insert of documents', async () => {
   ]);
 });
 
-test('simple query of documents', async () => {
+test('simple query', async () => {
   let doc = await driver.getDocs(
     'jedi',
     {
@@ -96,4 +96,55 @@ test('simple query of documents', async () => {
     name: 'Anakin Skywalker',
     origin: 'Tatooine'
   });
+});
+
+test('populated query', async () => {
+  let doc = await driver.getDocs(
+    'jedi',
+    {
+      origin: 'Tatooine'
+    },
+    [],
+    ['jedi']
+  );
+  delete doc._id;
+  delete doc.mentor._id;
+  expect(doc).toEqual({
+    name: 'Anakin Skywalker',
+    origin: 'Tatooine',
+    mentor: {
+      name: 'Obi-wan Kenobi',
+      origin: 'Stewjon'
+    }
+  });
+});
+
+test('simple update', async () => {
+  let doc = await database.collection('jedi').findOne({
+    origin: 'Tatooine'
+  });
+  await driver.updateDoc('jedi', doc._id, {
+    name: 'Darth Vader',
+    origin: 'Tatooine'
+  });
+  doc = await database.collection('jedi').findOne({
+    origin: 'Tatooine'
+  });
+  delete doc._id;
+  delete doc.mentor;
+  expect(doc).toEqual({
+    name: 'Darth Vader',
+    origin: 'Tatooine'
+  });
+});
+
+test('simple deletion', async () => {
+  let doc = await database.collection('jedi').findOne({
+    origin: 'Tatooine'
+  });
+  await driver.deleteDoc('jedi', doc._id);
+  doc = await database.collection('jedi').findOne({
+    origin: 'Tatooine'
+  });
+  expect(doc).toBe(null);
 });
