@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 
 const atlan = require('../Atlan');
@@ -18,13 +17,9 @@ MongoClient.connect(
           type: 'object',
           properties: {
             test: {
-              type: 'string'
+              type: 'string',
+              required: true
             }
-          }
-        },
-        hooks: {
-          patch: {
-            willValidate: [bodyParser.json()]
           }
         }
       }
