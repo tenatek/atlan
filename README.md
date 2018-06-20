@@ -1,16 +1,12 @@
 # Atlan
 
-Quickly create a CRUD REST API with Express and MongoDB.
+A framework that takes in your database schemas, and creates a full-blown Web CRUD API. For use with Express and MongoDB.
 
-**WARNING:** work in progress. ETA to production: March 2018.
+It includes the following features:
 
-Includes:
-
-* Schema definition & validation
-* Hooks for custom validation
-* Hooks for access control
-* Hooks for filtering data
-* Rich queries (data population, search, etc.)
+* Data sent to the API is validated against the appropriate schema.
+* Hooks can be defined to run code before validation and before/after database operations.
+* MongoDB's rich query capabilities can be leveraged through the use of URL query strings in `GET` requests.
 
 Inspired by [json-server](https://github.com/typicode/json-server).
 
@@ -18,83 +14,99 @@ Inspired by [json-server](https://github.com/typicode/json-server).
 
 `npm install --save atlan`
 
-## How to use
+## Quick start
 
-1. Declare your models and hooks with JSON
+1. Declare a JSON schema
 
 ```javascript
-const user = {
+const jedi = {
   schema: {
-    name: {
-      type: 'string',
-      required: true
-    },
-    email: {
-      type: 'string',
-      required: true
-    },
-    posts: {
-      type: 'array',
-      elements: {
-        type: 'ref',
-        model: 'post'
-      }
-    }
-  },
-
-  hooks: {
-    getOne: {
-      filter(data, authorization) {
-        return {
-          name: data.name
-        };
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        required: true
+      },
+      lightsaberColor: {
+        type: 'string',
+        required: true
+      },
+      killedByAnakin: {
+        type: 'boolean'
+      },
+      battlesFought: {
+        type: 'array',
+        items: {
+          type: 'string'
+        }
       }
     }
   }
 };
-
-const post = {
-  schema: {
-    title: {
-      type: 'string',
-      required: true
-    },
-    body: {
-      type: 'string',
-      required: true
-    },
-    likes: {
-      type: 'number'
-    },
-    publisher: {
-      type: 'ref',
-      model: 'user',
-      required: true
-    }
-  }
-};
 ```
 
-2. Instantiate Atlan and plug into Express
+2. Create a connection to your MongoDB database
 
 ```javascript
-const app = Express();
-const api = new Atlan();
-
-Express().use('/api', api.router());
+const connection = await MongoClient.connect(mongoUrl);
 ```
 
-3. Plug into the Mongo driver and tell Atlan about your models
+3. Start the engine
 
 ```javascript
-MongoClient.connect(url, (err, db) => {
-  api.driver(err, db);
-  api.model([['post', user]]);
-});
+const atlan = require('atlan');
+
+const jediApi = atlan(connection, { jedi });
 ```
 
-4. Start the server
+4. Plug into your Express app
 
 ```javascript
-app.listen(process.env.PORT);
+const express = require('express');
+const app = express();
+
+app.use('/api', jediApi);
+
+app.listen(port);
+```
+
+5. Voilá!
+
+You can now make CRUD Web requests. For instance:
+
+```http
+POST /api/jedi
+
+{
+  "name": "Windu",
+  "lightsaberColor": "purple",
+  "killedByAnakin": true,
+  "battlesFought": [
+    "Naboo Crisis",
+    "Clone Wars"
+  ]
+}
+```
+
+Will persist the data to the database and return a `201 Created` status code with the `_id` of the new document.
+
+Then doing:
+
+```http
+GET /api/jedi?killedByAnakin=true
+```
+
+Will return a `200 OK` code along with the data:
+
+```json
+{
+  "_id": "5abf5e3b3efd1720595cc82f",
+  "name": "Windu",
+  "lightsaberColor": "purple",
+  "killedByAnakin": true,
+  "battlesFought": [
+    "Naboo Crisis",
+    "Clone Wars"
+  ]
+}
 ```
