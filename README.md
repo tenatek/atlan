@@ -55,64 +55,64 @@ const atlan = require('atlan');
 
 2. Create a connection to your MongoDB database.
 
-  ```javascript
-  const connection = await MongoClient.connect(mongoUrl);
-  ```
+   ```javascript
+   const connection = await MongoClient.connect(mongoUrl);
+   ```
 
 3. Start the engine.
 
-  ```javascript
-  const jediApi = atlan(connection, { jedi });
-  ```
+   ```javascript
+   const jediApi = atlan(connection, { jedi });
+   ```
 
 4. Plug into your Express app.
 
-  ```javascript
-  const express = require('express');
-  const app = express();
+   ```javascript
+   const express = require('express');
+   const app = express();
 
-  app.use('/api', jediApi);
+   app.use('/api', jediApi);
 
-  app.listen(port);
-  ```
+   app.listen(port);
+   ```
 
 5. Voilá!
 
-  You can now make CRUD Web requests. For instance:
+   You can now make CRUD Web requests. For instance:
 
-  ```http
-  POST /api/jedi
+   ```http
+   POST /api/jedi
 
-  {
-    "name": "Windu",
-    "lightsaberColor": "purple",
-    "killedByAnakin": true,
-    "battlesFought": [
-      "Naboo Crisis",
-      "Clone Wars"
-    ]
-  }
-  ```
+   {
+     "name": "Windu",
+     "lightsaberColor": "purple",
+     "killedByAnakin": true,
+     "battlesFought": [
+       "Naboo Crisis",
+       "Clone Wars"
+     ]
+   }
+   ```
 
-  Will persist the data to the database and return a `201 Created` status code with the `_id` of the new document.
+   Will persist the data to the database and return a `201 Created` status code with the `_id` of the new document.
 
-  Then doing:
+   Then doing:
 
-  ```http
-  GET /api/jedi?killedByAnakin=true
-  ```
+   ```http
+   GET /api/jedi?killedByAnakin=true
+   ```
 
-  Will return a `200 OK` code along with the data:
+   Will return a `200 OK` code along with the data:
 
-  ```json
-  {
-    "_id": "5abf5e3b3efd1720595cc82f",
-    "name": "Windu",
-    "lightsaberColor": "purple",
-    "killedByAnakin": true,
-    "battlesFought": [
-      "Naboo Crisis",
-      "Clone Wars"
-    ]
-  }
-  ```
+   ```json
+   {
+     "_id": "5abf5e3b3efd1720595cc82f",
+     "name": "Windu",
+     "lightsaberColor": "purple",
+     "killedByAnakin": true,
+     "battlesFought": [
+       "Naboo Crisis",
+       "Clone Wars"
+     ]
+   }
+   ```
