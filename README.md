@@ -12,7 +12,9 @@ It includes the following features:
 
 Just do:
 
-`npm install --save atlan`
+```shell
+npm install --save atlan
+```
 
 And then:
 
@@ -24,32 +26,32 @@ const atlan = require('atlan');
 
 1. Declare a JSON schema.
 
-  ```javascript
-  const jedi = {
-    schema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          required: true
-        },
-        lightsaberColor: {
-          type: 'string',
-          required: true
-        },
-        killedByAnakin: {
-          type: 'boolean'
-        },
-        battlesFought: {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        }
-      }
-    }
-  };
-  ```
+   ```javascript
+   const jedi = {
+     schema: {
+       type: 'object',
+       properties: {
+         name: {
+           type: 'string',
+           required: true
+         },
+         lightsaberColor: {
+           type: 'string',
+           required: true
+         },
+         killedByAnakin: {
+           type: 'boolean'
+         },
+         battlesFought: {
+           type: 'array',
+           items: {
+             type: 'string'
+           }
+         }
+       }
+     }
+   };
+   ```
 
 2. Create a connection to your MongoDB database.
 
