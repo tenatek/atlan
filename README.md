@@ -105,14 +105,16 @@ const atlan = require('atlan');
    Will return a `200 OK` code along with the data:
 
    ```json
-   {
-     "_id": "5abf5e3b3efd1720595cc82f",
-     "name": "Windu",
-     "lightsaberColor": "purple",
-     "killedByAnakin": true,
-     "battlesFought": [
-       "Naboo Crisis",
-       "Clone Wars"
-     ]
-   }
+   [
+     {
+       "_id": "5abf5e3b3efd1720595cc82f",
+       "name": "Windu",
+       "lightsaberColor": "purple",
+       "killedByAnakin": true,
+       "battlesFought": [
+         "Naboo Crisis",
+         "Clone Wars"
+       ]
+     }
+   ]
    ```
