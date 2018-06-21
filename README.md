@@ -63,7 +63,7 @@ const atlan = require('atlan');
 3. Start the engine.
 
    ```javascript
-   const jediApi = atlan(connection, { jedi });
+   const jediApi = atlan(connection.db('sw-characters'), { jedi });
    ```
 
 4. Plug into your Express app.
