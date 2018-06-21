@@ -23,16 +23,15 @@
     "acamani": "^1.0.1",
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
-    "jest": "^23.1.0",
-    "mongodb-memory-server": "^1.8.0"
+    "jest": "^23.1.0"
   },
   "peerDependencies": {
     "express": "^4.15.4",
     "mongodb": "^3.0.10"
   },
   "jest": {
-    "globalSetup": "./tests/config/setup.js",
-    "globalTeardown": "./tests/config/teardown.js",
-    "testEnvironment": "./tests/config/environment.js"
+    "globals": {
+      "MONGO_URL": "mongodb://localhost:27017"
+    }
   }
 }

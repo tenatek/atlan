@@ -8,8 +8,8 @@ let database;
 let driver;
 
 beforeAll(async () => {
-  connection = await MongoClient.connect(global.__MONGO_URI__);
-  database = await connection.db(global.__MONGO_DB_NAME__);
+  connection = await MongoClient.connect(global.MONGO_URL);
+  database = connection.db('atlan');
   driver = new Driver(database);
   driver.addIndex('jedi', {
     ref: [
@@ -24,7 +24,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await connection.close();
+  await connection.close(true);
 });
 
 test('simple insert', async () => {
