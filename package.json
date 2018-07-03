@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "acamani": "^1.0.1",
-    "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
     "jest": "^23.1.0"
   },
