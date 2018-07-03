@@ -1,7 +1,7 @@
 {
   "name": "atlan",
   "version": "1.0.0",
-  "description": "A framework that takes in your database schemas, and creates a full-blown Web REST/CRUD API. For use with Express and MongoDB.",
+  "description": "A framework to build REST APIs with Express and MongoDB.",
   "main": "Atlan.js",
   "scripts": {
     "test": "jest"
@@ -11,6 +11,7 @@
     "Ludovic Cyril Michel <ludovic@tenatek.com> (https://github.com/ludoviccyril)"
   ],
   "repository": "github:tenatek/atlan",
+  "homepage": "https://atlan.tenatek.com",
   "license": "MIT",
   "dependencies": {
     "aniame": "^1.3.0",
