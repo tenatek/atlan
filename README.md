@@ -1,6 +1,6 @@
 # Atlan
 
-A framework that takes in your database schemas, and creates a full-blown Web REST/CRUD API. For use with Express and MongoDB.
+A framework to build REST APIs with Express and MongoDB. 
 
 It includes the following features:
 

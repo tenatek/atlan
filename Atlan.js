@@ -11,19 +11,18 @@ const DefinitionValidator = require('./lib/DefinitionValidator');
 const MiddlewareHandler = require('./lib/MiddlewareHandler');
 
 function atlan(database, models, config) {
-  config = ConfigParser.parseConfig(config);
-
+  let parsedConfig = ConfigParser.parseConfig(config);
   let router = express.Router();
   let driver = new Driver(database);
   let dataValidator = new DataValidator();
   let middlewareHandler = new MiddlewareHandler(
-    config.hooks,
-    config.errorHandler
+    parsedConfig.hooks,
+    parsedConfig.errorHandler
   );
 
-  if (config.parseRequest === 'json') {
+  if (parsedConfig.parseRequest === 'json') {
     router.use(bodyParser.json());
-  } else if (config.parseRequest === 'formData') {
+  } else if (parsedConfig.parseRequest === 'formData') {
     router.use(multer().any());
   }
 

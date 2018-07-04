@@ -24,6 +24,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await database.dropDatabase();
   await connection.close(true);
 });
 
@@ -82,7 +83,7 @@ test('nested insert', async () => {
 });
 
 test('simple query', async () => {
-  let doc = await driver.getDocs(
+  let docs = await driver.getDocs(
     'jedi',
     {
       origin: 'Tatooine'
@@ -90,16 +91,32 @@ test('simple query', async () => {
     [],
     []
   );
-  delete doc._id;
-  delete doc.mentor;
-  expect(doc).toEqual({
-    name: 'Anakin Skywalker',
-    origin: 'Tatooine'
+  docs.forEach(doc => {
+    delete doc._id;
+    delete doc.mentor;
   });
+  expect(docs).toEqual([
+    {
+      name: 'Anakin Skywalker',
+      origin: 'Tatooine'
+    }
+  ]);
+});
+
+test('query with no results', async () => {
+  let doc = await driver.getDocs(
+    'jedi',
+    {
+      origin: 'Alderaan'
+    },
+    [],
+    []
+  );
+  expect(doc).toEqual([]);
 });
 
 test('populated query', async () => {
-  let doc = await driver.getDocs(
+  let docs = await driver.getDocs(
     'jedi',
     {
       origin: 'Tatooine'
@@ -107,16 +124,20 @@ test('populated query', async () => {
     [],
     ['jedi']
   );
-  delete doc._id;
-  delete doc.mentor._id;
-  expect(doc).toEqual({
-    name: 'Anakin Skywalker',
-    origin: 'Tatooine',
-    mentor: {
-      name: 'Obi-wan Kenobi',
-      origin: 'Stewjon'
-    }
+  docs.forEach(doc => {
+    delete doc._id;
+    delete doc.mentor._id;
   });
+  expect(docs).toEqual([
+    {
+      name: 'Anakin Skywalker',
+      origin: 'Tatooine',
+      mentor: {
+        name: 'Obi-wan Kenobi',
+        origin: 'Stewjon'
+      }
+    }
+  ]);
 });
 
 test('simple update', async () => {
