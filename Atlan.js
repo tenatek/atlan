@@ -14,7 +14,7 @@ function atlan(database, models, config) {
   let parsedConfig = ConfigParser.parseConfig(config);
   let router = express.Router();
   let driver = new Driver(database);
-  let dataValidator = new DataValidator();
+  let dataValidator = new DataValidator(driver);
   let middlewareHandler = new MiddlewareHandler(
     parsedConfig.hooks,
     parsedConfig.errorHandler
