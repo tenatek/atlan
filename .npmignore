@@ -2,3 +2,4 @@ coverage
 tests
 .eslintrc
 .gitignore
+.travis.yml
