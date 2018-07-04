@@ -1,23 +1,5 @@
 {
-  "extends": "eslint:recommended",
-  "rules": {
-    "arrow-body-style": ["error", "always"],
-    "brace-style": "error",
-    "class-methods-use-this": "error",
-    "comma-dangle": ["error", "never"],
-    "curly": "error",
-    "eol-last": ["error", "always"],
-    "eqeqeq": "error",
-    "indent": ["error", 2],
-    "max-len": ["error", { "ignoreComments": true }],
-    "no-multiple-empty-lines": ["error", { "max": 1 }],
-    "no-shadow": "error",
-    "no-trailing-spaces": "error",
-    "no-var": "error",
-    "padded-blocks": ["error", { "classes": "always" }],
-    "prefer-template": "error",
-    "spaced-comment": ["error", "always"]
-  },
+  "extends": "tenatek",
   "env": {
     "jest": true,
     "node": true

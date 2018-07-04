@@ -23,6 +23,7 @@
   "devDependencies": {
     "acamani": "^1.0.1",
     "eslint": "^4.19.1",
+    "eslint-config-tenatek": "^1.0.0",
     "jest": "^23.1.0"
   },
   "peerDependencies": {
