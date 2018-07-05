@@ -14,7 +14,7 @@
   "homepage": "https://atlan.tenatek.com",
   "license": "MIT",
   "dependencies": {
-    "aniame": "^1.3.0",
+    "aniame": "^2.0.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "mongodb": "^3.0.10",
@@ -23,7 +23,7 @@
   "devDependencies": {
     "acamani": "^1.0.1",
     "eslint": "^4.19.1",
-    "eslint-config-tenatek": "^1.0.0",
+    "eslint-config-tenatek": "^1.1.0",
     "jest": "^23.1.0"
   },
   "peerDependencies": {
