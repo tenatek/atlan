@@ -70,9 +70,7 @@ test('wrapping', () => {
 test('get correct reference paths', () => {
   expect.assertions(1);
 
-  let indexingResults = SchemaHandler.indexSchema(
-    SchemaHandler.wrapSchema(schema)
-  );
+  let indexingResults = SchemaHandler.indexSchema(schema);
   let expectedResults = [
     {
       path: JSONPath.from(['mentor']),
