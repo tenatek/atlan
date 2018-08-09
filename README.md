@@ -30,24 +30,21 @@ const atlan = require('atlan');
    ```javascript
    const jedi = {
      schema: {
-       type: 'object',
-       properties: {
-         name: {
-           type: 'string',
-           required: true
-         },
-         lightsaberColor: {
-           type: 'string',
-           required: true
-         },
-         killedByAnakin: {
-           type: 'boolean'
-         },
-         battlesFought: {
-           type: 'array',
-           items: {
-             type: 'string'
-           }
+       name: {
+         type: 'string',
+         required: true
+       },
+       lightsaberColor: {
+         type: 'string',
+         required: true
+       },
+       killedByAnakin: {
+         type: 'boolean'
+       },
+       battlesFought: {
+         type: 'array',
+         items: {
+           type: 'string'
          }
        }
      }
