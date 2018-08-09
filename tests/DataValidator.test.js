@@ -5,20 +5,17 @@ const DataValidator = require('../lib/DataValidator');
 const Driver = require('../lib/Driver');
 
 const schema = {
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string',
-      required: true
-    },
-    mentor: {
-      type: 'ref',
-      ref: 'jedi'
-    },
-    origin: {
-      type: 'string',
-      required: true
-    }
+  name: {
+    type: 'string',
+    required: true
+  },
+  mentor: {
+    type: 'ref',
+    ref: 'jedi'
+  },
+  origin: {
+    type: 'string',
+    required: true
   }
 };
 
