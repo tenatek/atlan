@@ -4,11 +4,6 @@ const { JSONPath } = require('acamani');
 const DataValidator = require('../lib/DataValidator');
 const Driver = require('../lib/Driver');
 
-let connection;
-let database;
-let driver;
-let dataValidator;
-
 const schema = {
   type: 'object',
   properties: {
@@ -26,6 +21,11 @@ const schema = {
     }
   }
 };
+
+let connection;
+let database;
+let driver;
+let dataValidator;
 
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
