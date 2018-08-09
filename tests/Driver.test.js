@@ -11,16 +11,12 @@ beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
   database = connection.db('atlan');
   driver = new Driver(database);
-  driver.addIndex('jedi', {
-    ref: [
-      {
-        path: new JSONPath().addPathSegment('mentor'),
-        data: {
-          ref: 'jedi'
-        }
-      }
-    ]
-  });
+  driver.addIndex('jedi', [
+    {
+      path: JSONPath.from(['mentor']),
+      ref: 'jedi'
+    }
+  ]);
 });
 
 afterAll(async () => {
@@ -29,6 +25,8 @@ afterAll(async () => {
 });
 
 test('simple insert', async () => {
+  expect.assertions(1);
+
   await driver.insertDoc('jedi', {
     name: 'Qui-gon Jinn',
     origin: 'Coruscant'
@@ -41,6 +39,7 @@ test('simple insert', async () => {
     delete doc._id;
     delete doc.mentor;
   });
+
   expect(docs).toEqual([
     {
       name: 'Qui-gon Jinn',
@@ -50,6 +49,8 @@ test('simple insert', async () => {
 });
 
 test('nested insert', async () => {
+  expect.assertions(1);
+
   await driver.insertDoc('jedi', {
     name: 'Anakin Skywalker',
     origin: 'Tatooine',
@@ -66,6 +67,7 @@ test('nested insert', async () => {
     delete doc._id;
     delete doc.mentor;
   });
+
   expect(docs).toEqual([
     {
       name: 'Qui-gon Jinn',
@@ -83,6 +85,8 @@ test('nested insert', async () => {
 });
 
 test('simple query', async () => {
+  expect.assertions(1);
+
   let docs = await driver.getDocs(
     'jedi',
     {
@@ -95,6 +99,7 @@ test('simple query', async () => {
     delete doc._id;
     delete doc.mentor;
   });
+
   expect(docs).toEqual([
     {
       name: 'Anakin Skywalker',
@@ -104,6 +109,8 @@ test('simple query', async () => {
 });
 
 test('query with no results', async () => {
+  expect.assertions(1);
+
   let doc = await driver.getDocs(
     'jedi',
     {
@@ -112,10 +119,13 @@ test('query with no results', async () => {
     [],
     []
   );
+
   expect(doc).toEqual([]);
 });
 
 test('populated query', async () => {
+  expect.assertions(1);
+
   let docs = await driver.getDocs(
     'jedi',
     {
@@ -128,6 +138,7 @@ test('populated query', async () => {
     delete doc._id;
     delete doc.mentor._id;
   });
+
   expect(docs).toEqual([
     {
       name: 'Anakin Skywalker',
@@ -141,6 +152,8 @@ test('populated query', async () => {
 });
 
 test('simple update', async () => {
+  expect.assertions(1);
+
   let doc = await database.collection('jedi').findOne({
     origin: 'Tatooine'
   });
@@ -153,6 +166,7 @@ test('simple update', async () => {
   });
   delete doc._id;
   delete doc.mentor;
+
   expect(doc).toEqual({
     name: 'Darth Vader',
     origin: 'Tatooine'
@@ -160,6 +174,8 @@ test('simple update', async () => {
 });
 
 test('simple deletion', async () => {
+  expect.assertions(1);
+
   let doc = await database.collection('jedi').findOne({
     origin: 'Tatooine'
   });
@@ -167,5 +183,6 @@ test('simple deletion', async () => {
   doc = await database.collection('jedi').findOne({
     origin: 'Tatooine'
   });
+
   expect(doc).toBe(null);
 });

@@ -3,3 +3,4 @@ tests
 .eslintrc
 .gitignore
 .travis.yml
+jest.config.js
