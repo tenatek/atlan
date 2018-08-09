@@ -48,6 +48,7 @@ function atlan(database, models, config) {
       modelName,
       dataValidator,
       middlewareHandler,
+      queryBuilder,
       driver,
       router
     );
