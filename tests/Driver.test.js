@@ -9,7 +9,7 @@ let driver;
 
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
-  database = connection.db('atlan');
+  database = connection.db('atlan-d');
   driver = new Driver(database);
   driver.addIndex('jedi', [
     {

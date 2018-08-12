@@ -26,7 +26,7 @@ let dataValidator;
 
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
-  database = connection.db('atlan');
+  database = connection.db('atlan-dv');
   driver = new Driver(database);
   driver.addIndex('jedi', [
     {
