@@ -131,8 +131,8 @@ test('populated query', async () => {
     {
       origin: 'Tatooine'
     },
-    [],
-    ['jedi']
+    ['jedi'],
+    []
   );
   docs.forEach(doc => {
     delete doc._id;
