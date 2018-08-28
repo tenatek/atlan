@@ -1,6 +1,6 @@
 const { JSONPath } = require('acamani');
 
-const SchemaHandler = require('../lib/SchemaHandler');
+const SchemaIndexer = require('../lib/SchemaIndexer');
 const Util = require('../lib/Util');
 
 let model;
@@ -41,7 +41,7 @@ beforeAll(() => {
 test('get correct reference paths', () => {
   expect.assertions(1);
 
-  let indexingResults = SchemaHandler.indexSchema(model.schema);
+  let indexingResults = SchemaIndexer.indexSchema(model.schema);
   let expectedResults = [
     {
       path: JSONPath.from(['mentor']),

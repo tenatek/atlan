@@ -9,7 +9,7 @@ const Driver = require('./lib/Driver');
 const MiddlewareHandler = require('./lib/MiddlewareHandler');
 const QueryBuilder = require('./lib/QueryBuilder');
 const Router = require('./lib/Router');
-const SchemaHandler = require('./lib/SchemaHandler');
+const SchemaIndexer = require('./lib/SchemaIndexer');
 const Util = require('./lib/Util');
 
 function atlan(database, models, config) {
@@ -35,7 +35,7 @@ function atlan(database, models, config) {
     Util.wrapSchema(models[modelName]);
     DefinitionValidator.validateModel(models[modelName], modelName, modelNames);
 
-    let index = SchemaHandler.indexSchema(models[modelName].schema);
+    let index = SchemaIndexer.indexSchema(models[modelName].schema);
 
     driver.addIndex(modelName, index);
     dataValidator.addSchema(modelName, models[modelName].schema);
