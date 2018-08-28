@@ -10,6 +10,7 @@ const MiddlewareHandler = require('./lib/MiddlewareHandler');
 const QueryBuilder = require('./lib/QueryBuilder');
 const Router = require('./lib/Router');
 const SchemaHandler = require('./lib/SchemaHandler');
+const Util = require('./lib/Util');
 
 function atlan(database, models, config) {
   let parsedConfig = ConfigParser.parseConfig(config);
@@ -31,6 +32,7 @@ function atlan(database, models, config) {
 
   let modelNames = Object.keys(models);
   for (let modelName of modelNames) {
+    Util.wrapSchema(models[modelName]);
     DefinitionValidator.validateModel(models[modelName], modelName, modelNames);
 
     let index = SchemaHandler.indexSchema(models[modelName].schema);

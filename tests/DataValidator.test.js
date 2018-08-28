@@ -3,21 +3,9 @@ const { JSONPath } = require('acamani');
 
 const DataValidator = require('../lib/DataValidator');
 const Driver = require('../lib/Driver');
+const Util = require('../lib/Util');
 
-const schema = {
-  name: {
-    type: 'string',
-    required: true
-  },
-  mentor: {
-    type: 'ref',
-    ref: 'jedi'
-  },
-  origin: {
-    type: 'string',
-    required: true
-  }
-};
+let model;
 
 let connection;
 let database;
@@ -25,6 +13,22 @@ let driver;
 let dataValidator;
 
 beforeAll(async () => {
+  model = {
+    schema: {
+      name: {
+        type: 'string',
+        required: true
+      },
+      mentor: {
+        type: 'ref',
+        ref: 'jedi'
+      },
+      origin: {
+        type: 'string',
+        required: true
+      }
+    }
+  };
   connection = await MongoClient.connect(global.MONGO_URL);
   database = connection.db('atlan-dv');
   driver = new Driver(database);
@@ -35,7 +39,8 @@ beforeAll(async () => {
     }
   ]);
   dataValidator = new DataValidator(driver);
-  dataValidator.addSchema('jedi', schema);
+  Util.wrapSchema(model);
+  dataValidator.addSchema('jedi', model.schema);
 });
 
 afterAll(async () => {
