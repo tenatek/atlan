@@ -97,6 +97,22 @@ test('create valid jedi', async () => {
   expect(typeof jediId).toBe('string');
 });
 
+test('create another valid jedi', async () => {
+  let response = await request(app)
+    .post('/jedi')
+    .send({
+      name: 'Ezra Bridger',
+      homePlanet: {
+        name: 'Lothal',
+        capital: 'Lothal City'
+      }
+    })
+    .set('Content-Type', 'application/json');
+
+  expect.assertions(1);
+  expect(typeof response.body).toBe('string');
+});
+
 test('create invalid jedi', async () => {
   let response = await request(app)
     .post('/jedi')
@@ -110,11 +126,71 @@ test('create invalid jedi', async () => {
   expect(response.body).toEqual([['homePlanet']]);
 });
 
+test('create another invalid jedi', async () => {
+  let response = await request(app)
+    .post('/jedi')
+    .send({
+      name: 'Obi-Wan Kenobi',
+      homePlanet: {
+        name: 'Stewjon'
+      }
+    })
+    .set('Content-Type', 'application/json');
+
+  expect.assertions(1);
+  expect(response.body).toEqual([['homePlanet', 'capital']]);
+});
+
 test('update jedi with valid data', async () => {
   let response = await request(app)
     .patch(`/jedi/${jediId}`)
     .send({
       name: 'Darth Vader'
+    })
+    .set('Content-Type', 'application/json');
+
+  expect.assertions(1);
+  expect(response.status).toBe(200);
+});
+
+test('retrieve one jedi', async () => {
+  let response = await request(app).get(`/jedi/${jediId}`);
+
+  expect.assertions(1);
+  expect(response.body).toEqual({
+    _id: jediId,
+    name: 'Darth Vader',
+    homePlanet: planetId
+  });
+});
+
+test('retrieve jedi with query', async () => {
+  let response = await request(app).get(
+    `/jedi?homePlanet=${planetId}&_populate=planet`
+  );
+
+  expect.assertions(1);
+  expect(response.body).toEqual([
+    {
+      _id: jediId,
+      name: 'Darth Vader',
+      homePlanet: {
+        _id: planetId,
+        name: 'Tatooine',
+        capital: 'Mos Eisley'
+      }
+    }
+  ]);
+});
+
+test('update jedi with more valid data', async () => {
+  let response = await request(app)
+    .patch(`/jedi/${jediId}`)
+    .send({
+      homePlanet: {
+        name: 'Mustafar',
+        capital: 'Black Fortress'
+      }
     })
     .set('Content-Type', 'application/json');
 
@@ -134,17 +210,6 @@ test('update jedi with invalid data', async () => {
   expect(response.body).toEqual([['title']]);
 });
 
-test('retrieve one jedi', async () => {
-  let response = await request(app).get(`/jedi/${jediId}`);
-
-  expect.assertions(1);
-  expect(response.body).toEqual({
-    _id: jediId,
-    name: 'Darth Vader',
-    homePlanet: planetId
-  });
-});
-
 test('delete one jedi', async () => {
   let response = await request(app).delete(`/jedi/${jediId}`);
 
@@ -156,5 +221,5 @@ test('retrieve all jedi', async () => {
   let response = await request(app).get('/jedi');
 
   expect.assertions(1);
-  expect(response.body).toEqual([]);
+  expect(response.body.length).toBe(1);
 });
