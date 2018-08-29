@@ -17,13 +17,13 @@ function atlan(database, models, globalConfig) {
   }
   ConfigValidator.validateGlobalConfig(_globalConfig);
 
-  let driver = new Driver(database);
   let configHolder = new ConfigHolder(
     _globalConfig.hooks,
     _globalConfig.errorHandler
   );
+  let driver = new Driver(database, configHolder);
   let queryBuilder = new QueryBuilder(configHolder);
-  let resourceValidator = new ResourceValidator(configHolder);
+  let resourceValidator = new ResourceValidator(driver, configHolder);
   let expressRouter = express.Router();
   let router = new Router(
     driver,
