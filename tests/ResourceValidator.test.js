@@ -43,9 +43,13 @@ test('simple validation', async () => {
 
   let error;
   try {
-    await resourceValidator.validateInsert('jedi', {
-      origin: 'Naboo'
-    });
+    await resourceValidator.validate(
+      'jedi',
+      {
+        origin: 'Naboo'
+      },
+      true
+    );
   } catch (err) {
     error = err;
   }
