@@ -1,7 +1,20 @@
 const { MongoClient } = require('mongodb');
-const { JSONPath } = require('acamani');
 
+const ConfigHolder = require('../lib/ConfigHolder');
 const Driver = require('../lib/Driver');
+
+let schema = {
+  name: {
+    type: 'string'
+  },
+  origin: {
+    type: 'string'
+  },
+  mentor: {
+    type: 'ref',
+    ref: 'jedi'
+  }
+};
 
 let connection;
 let database;
@@ -9,14 +22,10 @@ let driver;
 
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
+  let configHolder = new ConfigHolder();
+  configHolder.addSchema('jedi', { type: 'object', properties: schema });
   database = connection.db('atlan-d');
-  driver = new Driver(database);
-  driver.addIndex('jedi', [
-    {
-      path: JSONPath.from(['mentor']),
-      ref: 'jedi'
-    }
-  ]);
+  driver = new Driver(database, configHolder);
 });
 
 afterAll(async () => {

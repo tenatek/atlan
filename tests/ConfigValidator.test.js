@@ -1,4 +1,4 @@
-const DefinitionValidator = require('../lib/DefinitionValidator');
+const ConfigValidator = require('../lib/ConfigValidator');
 const Util = require('../lib/Util');
 
 let model;
@@ -112,7 +112,7 @@ beforeEach(() => {
 });
 
 test('valid hooks', () => {
-  let validationResult = DefinitionValidator.validateHooks(model);
+  let validationResult = ConfigValidator.validateHooks(model);
 
   expect.assertions(2);
   expect(validationResult).toBe(true);
@@ -121,7 +121,7 @@ test('valid hooks', () => {
 
 test('invalid hooks', () => {
   model.hooks.getOne.didQuery = {};
-  let validationResult = DefinitionValidator.validateHooks(model);
+  let validationResult = ConfigValidator.validateHooks(model);
 
   expect.assertions(1);
   expect(validationResult).toBe(false);
@@ -130,15 +130,15 @@ test('invalid hooks', () => {
 test('invalid hooks in model', () => {
   model.hooks.getOne.didQuery = {};
   function validateModel() {
-    DefinitionValidator.validateModel(model, 'jedi', ['jedi', 'city']);
+    ConfigValidator.validateModel(model, 'jedi', ['jedi', 'city']);
   }
 
   expect.assertions(1);
-  expect(validateModel).toThrow('Invalid hooks for jedi');
+  expect(validateModel).toThrow('Invalid hooks for: jedi');
 });
 
 test('valid options', () => {
-  let validationResult = DefinitionValidator.validateOptions(model);
+  let validationResult = ConfigValidator.validateOptions(model);
 
   expect.assertions(2);
   expect(validationResult).toBe(true);
@@ -147,7 +147,7 @@ test('valid options', () => {
 
 test('invalid options', () => {
   model.options.validationHooks = [{}];
-  let validationResult = DefinitionValidator.validateOptions(model);
+  let validationResult = ConfigValidator.validateOptions(model);
 
   expect.assertions(1);
   expect(validationResult).toBe(false);
@@ -156,16 +156,16 @@ test('invalid options', () => {
 test('invalid options in model', () => {
   model.options.validationHooks = [{}];
   function validateModel() {
-    DefinitionValidator.validateModel(model, 'jedi', ['jedi', 'city']);
+    ConfigValidator.validateModel(model, 'jedi', ['jedi', 'city']);
   }
 
   expect.assertions(1);
-  expect(validateModel).toThrow('Invalid options for jedi');
+  expect(validateModel).toThrow('Invalid options for: jedi');
 });
 
 test('valid model', () => {
   function validateModel() {
-    DefinitionValidator.validateModel(model, 'jedi', ['jedi', 'city']);
+    ConfigValidator.validateModel(model, 'jedi', ['jedi', 'city']);
   }
 
   expect.assertions(1);

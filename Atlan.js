@@ -1,62 +1,56 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 
-const ConfigParser = require('./lib/ConfigParser');
-const DataValidator = require('./lib/DataValidator');
-const DefinitionValidator = require('./lib/DefinitionValidator');
+const ConfigHolder = require('./lib/ConfigHolder');
+const ConfigValidator = require('./lib/ConfigValidator');
 const Driver = require('./lib/Driver');
-const MiddlewareHandler = require('./lib/MiddlewareHandler');
 const QueryBuilder = require('./lib/QueryBuilder');
+const ResourceValidator = require('./lib/ResourceValidator');
 const Router = require('./lib/Router');
-const SchemaIndexer = require('./lib/SchemaIndexer');
 const Util = require('./lib/Util');
 
-function atlan(database, models, config) {
-  let parsedConfig = ConfigParser.parseConfig(config);
+function atlan(database, models, globalConfig) {
+  // validate configuration & set defaults
+  let _globalConfig = globalConfig;
+  if (_globalConfig === undefined) {
+    _globalConfig = {};
+  }
+  ConfigValidator.validateGlobalConfig(_globalConfig);
 
   let driver = new Driver(database);
-  let dataValidator = new DataValidator(driver);
-  let middlewareHandler = new MiddlewareHandler(
-    parsedConfig.hooks,
-    parsedConfig.errorHandler
+  let configHolder = new ConfigHolder(
+    _globalConfig.hooks,
+    _globalConfig.errorHandler
   );
-  let queryBuilder = new QueryBuilder();
-  let router = express.Router();
+  let queryBuilder = new QueryBuilder(configHolder);
+  let resourceValidator = new ResourceValidator(configHolder);
+  let expressRouter = express.Router();
+  let router = new Router(
+    driver,
+    expressRouter,
+    configHolder,
+    queryBuilder,
+    resourceValidator
+  );
 
-  if (parsedConfig.parseRequest === 'json') {
-    router.use(bodyParser.json());
-  } else if (parsedConfig.parseRequest === 'formData') {
-    router.use(multer().any());
+  if (_globalConfig.parseRequestAsJson) {
+    expressRouter.use(bodyParser.json());
   }
 
   let modelNames = Object.keys(models);
   for (let modelName of modelNames) {
     Util.wrapSchema(models[modelName]);
-    DefinitionValidator.validateModel(models[modelName], modelName, modelNames);
 
-    let index = SchemaIndexer.indexSchema(models[modelName].schema);
+    ConfigValidator.validateModel(models[modelName], modelName, modelNames);
 
-    driver.addIndex(modelName, index);
-    dataValidator.addSchema(modelName, models[modelName].schema);
-    queryBuilder.addSchema(modelName, models[modelName].schema);
-    middlewareHandler.addHooks(modelName, models[modelName].hooks);
-    middlewareHandler.addErrorHandler(
-      modelName,
-      models[modelName].errorHandler
-    );
+    configHolder.addSchema(modelName, models[modelName].schema);
+    configHolder.addHooks(modelName, models[modelName].hooks);
+    configHolder.addErrorHandler(modelName, models[modelName].errorHandler);
 
-    Router.createRoutes(
-      modelName,
-      dataValidator,
-      middlewareHandler,
-      queryBuilder,
-      driver,
-      router
-    );
+    router.createRoutes(modelName);
   }
 
-  return router;
+  return expressRouter;
 }
 
 module.exports = atlan;

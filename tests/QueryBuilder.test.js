@@ -1,3 +1,4 @@
+const ConfigHolder = require('../lib/ConfigHolder');
 const QueryBuilder = require('../lib/QueryBuilder');
 
 const schema = {
@@ -18,8 +19,9 @@ const schema = {
 let queryBuilder;
 
 beforeAll(() => {
-  queryBuilder = new QueryBuilder();
-  queryBuilder.addSchema('jedi', schema);
+  let configHolder = new ConfigHolder();
+  configHolder.addSchema('jedi', { type: 'object', properties: schema });
+  queryBuilder = new QueryBuilder(configHolder);
 });
 
 test('simple query building', async () => {
