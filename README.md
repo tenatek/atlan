@@ -2,6 +2,11 @@
 
 A framework to build REST APIs with Express and MongoDB. 
 
+[![npm version](https://img.shields.io/npm/v/atlan.svg)](https://www.npmjs.com/package/atlan)
+[![npm downloads](https://img.shields.io/npm/dm/atlan.svg)](https://www.npmjs.com/package/atlan)
+[![build status](https://travis-ci.org/tenatek/atlan.svg?branch=master)](https://travis-ci.org/tenatek/atlan)
+[![coverage status](https://coveralls.io/repos/github/tenatek/atlan/badge.svg?branch=master&service=github)](https://coveralls.io/github/tenatek/atlan?branch=master)
+
 It includes the following features:
 
 * Data sent to the API is validated against the appropriate schema.
