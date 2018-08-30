@@ -247,7 +247,7 @@ test('retrieve one planet server-side', async () => {
 
 test('retrieve planets server-side', async () => {
   let planet = await atlan.retrieve('planet', {
-    population: '100000000000'
+    population: 100000000000
   });
   expect(planet).toEqual([
     {
