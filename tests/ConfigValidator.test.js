@@ -104,8 +104,7 @@ beforeEach(() => {
       }
     },
     options: {
-      errorHandler: middleware,
-      validationHooks: []
+      errorHandler: middleware
     }
   };
   Util.wrapSchema(expectedModel);
@@ -146,7 +145,7 @@ test('valid options', () => {
 });
 
 test('invalid options', () => {
-  model.options.validationHooks = [{}];
+  model.options.errorHandler = [];
   let validationResult = ConfigValidator.validateOptions(model);
 
   expect.assertions(1);
@@ -154,7 +153,7 @@ test('invalid options', () => {
 });
 
 test('invalid options in model', () => {
-  model.options.validationHooks = [{}];
+  model.options.errorHandler = [];
   function validateModel() {
     ConfigValidator.validateModel(model, 'jedi', ['jedi', 'city']);
   }
