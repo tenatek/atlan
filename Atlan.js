@@ -74,7 +74,7 @@ class Atlan {
     return this.driver.insertDoc(modelName, resource);
   }
 
-  retrieve(modelName, idOrQuery) {
+  async retrieve(modelName, idOrQuery) {
     let query;
     let queryBuilder = new QueryBuilder(
       modelName,
@@ -83,9 +83,16 @@ class Atlan {
     );
     if (typeof idOrQuery === 'string') {
       query = Util.wrapId(idOrQuery);
-    } else {
-      query = queryBuilder.buildQuery();
+      let [resource] = await this.driver.getDocs(
+        modelName,
+        query,
+        queryBuilder.buildPopulateQuery(),
+        [],
+        []
+      );
+      return resource;
     }
+    query = queryBuilder.buildQuery();
     return this.driver.getDocs(
       modelName,
       query,

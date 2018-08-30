@@ -39,6 +39,7 @@ const models = {
 
 let connection;
 let database;
+let atlan;
 let app;
 
 let planetId;
@@ -48,7 +49,8 @@ beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
   database = connection.db('atlan-a');
   app = express();
-  let api = new Atlan(database, models).api();
+  atlan = new Atlan(database, models);
+  let api = atlan.api();
   app.use(api);
 });
 
@@ -65,7 +67,7 @@ test('create valid planet', async () => {
       capital: 'Mos Eisley'
     })
     .set('Content-Type', 'application/json');
-  planetId = response.body;
+  planetId = response.text;
 
   expect.assertions(1);
   expect(typeof planetId).toBe('string');
@@ -91,7 +93,7 @@ test('create valid jedi', async () => {
       homePlanet: planetId
     })
     .set('Content-Type', 'application/json');
-  jediId = response.body;
+  jediId = response.text;
 
   expect.assertions(1);
   expect(typeof jediId).toBe('string');
@@ -110,7 +112,7 @@ test('create another valid jedi', async () => {
     .set('Content-Type', 'application/json');
 
   expect.assertions(1);
-  expect(typeof response.body).toBe('string');
+  expect(typeof response.text).toBe('string');
 });
 
 test('create invalid jedi', async () => {
@@ -222,4 +224,56 @@ test('retrieve all jedi', async () => {
 
   expect.assertions(1);
   expect(response.body.length).toBe(1);
+});
+
+test('create planet server-side', async () => {
+  planetId = await atlan.create('planet', {
+    name: 'Coruscant',
+    capital: 'Coruscant',
+    population: 100000000000
+  });
+  expect(typeof planetId).toBe('string');
+});
+
+test('retrieve one planet server-side', async () => {
+  let planet = await atlan.retrieve('planet', planetId);
+  expect(planet).toEqual({
+    _id: planetId,
+    name: 'Coruscant',
+    capital: 'Coruscant',
+    population: 100000000000
+  });
+});
+
+test('retrieve planets server-side', async () => {
+  let planet = await atlan.retrieve('planet', {
+    population: '100000000000'
+  });
+  expect(planet).toEqual([
+    {
+      _id: planetId,
+      name: 'Coruscant',
+      capital: 'Coruscant',
+      population: 100000000000
+    }
+  ]);
+});
+
+test('update planet server-side', async () => {
+  await atlan.update('planet', planetId, {
+    population: 0
+  });
+  let planet = await atlan.retrieve('planet', planetId);
+  expect(planet).toEqual({
+    _id: planetId,
+    name: 'Coruscant',
+    capital: 'Coruscant',
+    population: 0
+  });
+});
+
+test('delete planet server-side', async () => {
+  await atlan.delete('planet', planetId);
+  let planet = await atlan.retrieve('planet', planetId);
+  expect(planet).toEqual(undefined);
 });
