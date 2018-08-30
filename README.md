@@ -64,14 +64,14 @@ const atlan = require('atlan');
    };
    ```
 
-2. Create a connection to your MongoDB database.
+3. Create a connection to your MongoDB database.
 
    ```javascript
    let connection = await MongoClient.connect(mongoUrl);
    let database = connection.db('sw-characters');
    ```
 
-3. Start the engine.
+4. Start the engine.
 
    ```javascript
 
@@ -79,7 +79,7 @@ const atlan = require('atlan');
    let jediApi = atlan.api();
    ```
 
-4. Plug into your Express app.
+5. Plug into your Express app.
 
    ```javascript
    let app = express();
@@ -89,7 +89,7 @@ const atlan = require('atlan');
    app.listen(port);
    ```
 
-5. Voilá!
+6. Voilá!
 
    You can now make CRUD Web requests. For instance:
 
