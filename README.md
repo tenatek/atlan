@@ -1,5 +1,3 @@
-# Atlan
-
 A framework to build REST APIs with Express and MongoDB. 
 
 [![npm version](https://img.shields.io/npm/v/atlan.svg)](https://www.npmjs.com/package/atlan)
@@ -7,12 +5,16 @@ A framework to build REST APIs with Express and MongoDB.
 [![build status](https://travis-ci.org/tenatek/atlan.svg?branch=master)](https://travis-ci.org/tenatek/atlan)
 [![coverage status](https://coveralls.io/repos/github/tenatek/atlan/badge.svg?branch=master&service=github)](https://coveralls.io/github/tenatek/atlan?branch=master)
 
-It includes the following features:
+Atlan takes in your database connection and your resource schemas, and outputs a ready-to-use Express router with `GET`, `POST`, `PATCH` and `DELETE` routes for each resource type.
 
-* Data sent to the API is validated against the appropriate schema.
-* Hooks can be defined to run code before validation and before/after database operations.
+Atlan includes the following features:
+
+* Server-side validation against your schemas.
+* You can define hooks to run code before validation and before/after database operations.
 * MongoDB's rich query capabilities can be leveraged through the use of URL query strings in `GET` requests.
 * You retain full control of your database and Express app.
+
+The full docs are available at [atlan.tenatek.com](https://atlan.tenatek.com).
 
 ## Installation
 
