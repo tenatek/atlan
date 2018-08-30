@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const ConfigHolder = require('../lib/ConfigHolder');
+const ConfigHandler = require('../lib/ConfigHandler');
 const ResourceValidator = require('../lib/ResourceValidator');
 const Driver = require('../lib/Driver');
 
@@ -27,10 +27,10 @@ let resourceValidator;
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
   database = connection.db('atlan-dv');
-  let configHolder = new ConfigHolder();
-  configHolder.addSchema('jedi', { type: 'object', properties: schema });
-  driver = new Driver(database, configHolder);
-  resourceValidator = new ResourceValidator(driver, configHolder);
+  let configHandler = new ConfigHandler();
+  configHandler.addSchema('jedi', { type: 'object', properties: schema });
+  driver = new Driver(database, configHandler);
+  resourceValidator = new ResourceValidator(driver, configHandler);
 });
 
 afterAll(async () => {

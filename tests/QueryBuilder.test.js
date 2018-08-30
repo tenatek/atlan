@@ -1,4 +1,4 @@
-const ConfigHolder = require('../lib/ConfigHolder');
+const ConfigHandler = require('../lib/ConfigHandler');
 const QueryBuilder = require('../lib/QueryBuilder');
 
 const schema = {
@@ -16,23 +16,27 @@ const schema = {
   }
 };
 
-let queryBuilder;
+let configHandler;
 
 beforeAll(() => {
-  let configHolder = new ConfigHolder();
-  configHolder.addSchema('jedi', { type: 'object', properties: schema });
-  queryBuilder = new QueryBuilder(configHolder);
+  configHandler = new ConfigHandler();
+  configHandler.addSchema('jedi', { type: 'object', properties: schema });
 });
 
 test('simple query building', async () => {
+  let queryBuilder = new QueryBuilder(
+    'jedi',
+    {
+      name: 'Obi-wan Kenobi',
+      planetsVisited: '52',
+      isAlive: 'false'
+    },
+    configHandler
+  );
+
+  let mongoQuery = queryBuilder.buildQuery();
+
   expect.assertions(1);
-
-  let mongoQuery = queryBuilder.buildQuery('jedi', {
-    name: 'Obi-wan Kenobi',
-    planetsVisited: '52',
-    isAlive: 'false'
-  });
-
   expect(mongoQuery).toEqual({
     $and: [
       { name: 'Obi-wan Kenobi' },

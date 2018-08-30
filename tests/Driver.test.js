@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const ConfigHolder = require('../lib/ConfigHolder');
+const ConfigHandler = require('../lib/ConfigHandler');
 const Driver = require('../lib/Driver');
 
 let schema = {
@@ -22,10 +22,10 @@ let driver;
 
 beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
-  let configHolder = new ConfigHolder();
-  configHolder.addSchema('jedi', { type: 'object', properties: schema });
+  let configHandler = new ConfigHandler();
+  configHandler.addSchema('jedi', { type: 'object', properties: schema });
   database = connection.db('atlan-d');
-  driver = new Driver(database, configHolder);
+  driver = new Driver(database, configHandler);
 });
 
 afterAll(async () => {

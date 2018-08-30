@@ -2,7 +2,7 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const request = require('supertest');
 
-const atlan = require('../Atlan');
+const Atlan = require('../Atlan');
 
 const models = {
   jedi: {
@@ -48,7 +48,7 @@ beforeAll(async () => {
   connection = await MongoClient.connect(global.MONGO_URL);
   database = connection.db('atlan-a');
   app = express();
-  let api = atlan(database, models);
+  let api = new Atlan(database, models).api();
   app.use(api);
 });
 
