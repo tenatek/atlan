@@ -30,7 +30,15 @@ const atlan = require('atlan');
 
 ## Quick start
 
-1. Declare a JSON schema.
+1. Import the good stuff.
+
+   ```javascript
+   const express = require('express');
+   const { MongoClient } = require('mongodb');
+   const Atlan = require('atlan');
+   ```
+
+2. Declare a JSON schema.
 
    ```javascript
    const jedi = {
@@ -59,20 +67,22 @@ const atlan = require('atlan');
 2. Create a connection to your MongoDB database.
 
    ```javascript
-   const connection = await MongoClient.connect(mongoUrl);
+   let connection = await MongoClient.connect(mongoUrl);
+   let database = connection.db('sw-characters');
    ```
 
 3. Start the engine.
 
    ```javascript
-   const jediApi = atlan(connection.db('sw-characters'), { jedi });
+
+   let atlan = new Atlan(database, { jedi });
+   let jediApi = atlan.api();
    ```
 
 4. Plug into your Express app.
 
    ```javascript
-   const express = require('express');
-   const app = express();
+   let app = express();
 
    app.use('/api', jediApi);
 
