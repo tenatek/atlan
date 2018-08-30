@@ -1,3 +1,5 @@
+[![Atlan](https://atlan.tenatek.com/img/atlan.png)](https://atlan.tenatek.com)
+
 A framework to build REST APIs with Express and MongoDB. 
 
 [![npm version](https://img.shields.io/npm/v/atlan.svg)](https://www.npmjs.com/package/atlan)
@@ -14,7 +16,7 @@ Atlan includes the following features:
 * MongoDB's rich query capabilities can be leveraged through the use of URL query strings in `GET` requests.
 * You retain full control of your database and Express app.
 
-The full docs are available at [atlan.tenatek.com](https://atlan.tenatek.com).
+The full docs are available [here](https://atlan.tenatek.com).
 
 ## Installation
 
@@ -22,12 +24,6 @@ Just do:
 
 ```shell
 npm install --save atlan
-```
-
-And then:
-
-```javascript
-const atlan = require('atlan');
 ```
 
 ## Quick start
