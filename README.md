@@ -1,4 +1,4 @@
-[![Atlan](https://atlan.tenatek.com/img/logo-purple.png)](https://atlan.tenatek.com)
+[![Atlan](https://atlan.tenatek.com/img/logo-purple.png | height=100)](https://atlan.tenatek.com)
 
 A framework to build REST APIs with Express and MongoDB. 
 
