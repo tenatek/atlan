@@ -1,6 +1,6 @@
 {
   "name": "atlan",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A framework to build REST APIs with Express and MongoDB.",
   "main": "Atlan.js",
   "scripts": {
